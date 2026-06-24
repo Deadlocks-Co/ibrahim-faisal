@@ -6,9 +6,12 @@ export function Hero() {
           Ibrahim Faisal
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-          Software engineer building autonomous AI systems, cloud-native data
-          platforms, and architecture-to-delivery execution.
+          Solutions Architect focused on data platforms, AI systems, and
+          architecture-to-delivery execution.
         </p>
+        <div className="mt-4 max-w-2xl text-sm text-muted-foreground">
+          Snowflake · Informatica · Salesforce · AWS · Kafka · AI Delivery Systems
+        </div>
         <div className="mt-8 flex gap-4 text-sm">
           <a href="/projects" className="underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
             View projects
