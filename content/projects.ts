@@ -8,21 +8,35 @@ export interface Project {
   stack: string[];
   year: string;
   featured: boolean;
+  status?: "Live" | "Prototype" | "Concept";
+  role?: string;
+  metrics?: string[];
   links: { label: string; href: string }[];
 }
 
 export const projects: Project[] = [
   {
-    slug: "vivanti-delivery-brain",
-    title: "Vivanti Delivery Brain",
-    summary: "Autonomous AI systems for cloud-native data platform delivery.",
-    context: "Built to reduce friction between architecture, planning, and delivery for platform and data work.",
-    approach: "Combined structured delivery thinking with AI-assisted execution patterns and reusable operating flows.",
-    impact: "Improved clarity, speed, and repeatability across engineering delivery work.",
-    stack: ["Next.js", "TypeScript", "AI Systems", "Cloud"],
+    slug: "agentic-data-platform-delivery-engine",
+    title: "Agentic Data Platform Delivery Engine",
+    summary: "Multi-agent orchestration platform that turns architecture standards into production-ready infrastructure, data pipelines, analytics models, dashboards, documentation, and delivery workflows.",
+    context: "New contact centre platform engagements required experienced engineers to manually coordinate scaffolding, Jira tracking, repository changes, CI/CD, Snowflake objects, dbt models, dashboards, and documentation across multiple tools and environments.",
+    approach: "Designed an agentic delivery engine that coordinates specialised AI agents across platform engineering, data engineering, dbt, DevOps, reporting, and technical writing. The system converts architecture constraints into executable delivery workflows, creates and progresses Jira stories, generates implementation artefacts, raises pull requests, and keeps every onboarding run auditable and reproducible.",
+    impact: "Reduced new platform onboarding from 3-5 engineer-days to under 90 minutes unattended, while improving reproducibility, delivery consistency, and architecture compliance at the point of generation instead of during late-stage review.",
+    stack: ["Claude Code", "Multi-Agent Architecture", "Snowflake", "dbt", "Terraform", "AWS", "Bitbucket", "Jira", "Streamlit"],
     year: "2026",
     featured: true,
-    links: [{ label: "Case study", href: "#" }]
+    status: "Live",
+    role: "Solutions Architect / Senior Consultant",
+    metrics: [
+      "3-5 engineer-days reduced to under 90 minutes",
+      "Six specialised agents coordinated through one delivery workflow",
+      "Eight-story Jira lifecycle automated per onboarding run",
+      "Architecture compliance enforced before pull requests are raised"
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/ikfaisal" },
+      { label: "Talk to me", href: "mailto:ibrahim.faisal@vivanti.com?subject=Agentic%20Data%20Platform%20Delivery%20Engine" }
+    ]
   },
   {
     slug: "contextatlas",
@@ -34,6 +48,7 @@ export const projects: Project[] = [
     stack: ["TypeScript", "Knowledge Systems", "Automation"],
     year: "2025",
     featured: true,
+    status: "Prototype",
     links: [{ label: "Case study", href: "#" }]
   },
   {
@@ -46,6 +61,7 @@ export const projects: Project[] = [
     stack: ["Platform Engineering", "Developer Experience"],
     year: "2025",
     featured: true,
+    status: "Prototype",
     links: [{ label: "Case study", href: "#" }]
   },
   {
@@ -58,6 +74,7 @@ export const projects: Project[] = [
     stack: ["Next.js", "React", "Tailwind CSS"],
     year: "2026",
     featured: false,
+    status: "Live",
     links: [{ label: "Live", href: "#" }]
   }
 ];
