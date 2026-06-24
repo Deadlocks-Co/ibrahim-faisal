@@ -11,12 +11,12 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
 export const metadata: Metadata = {
-  title: "Ibrahim Faisal — Solutions Architect",
-  description: "Solutions Architect focused on data platforms, AI systems, and architecture-to-delivery execution.",
+  title: "Ibrahim Faisal — Founder of Deadlock Labs",
+  description: "AI Systems Architect, Data Platform Builder, and founder of Deadlock Labs. Exploring ideas across AI, data, language, community businesses, and interactive products.",
   metadataBase: new URL(siteUrl),
   openGraph: {
-    title: "Ibrahim Faisal — Solutions Architect",
-    description: "Solutions Architect focused on data platforms, AI systems, and architecture-to-delivery execution.",
+    title: "Ibrahim Faisal — Founder of Deadlock Labs",
+    description: "AI Systems Architect, Data Platform Builder, and founder of Deadlock Labs.",
     url: siteUrl,
     siteName: "Ibrahim Faisal",
     images: [{ url: "/og.svg", width: 1200, height: 630, alt: "Ibrahim Faisal" }],
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ibrahim Faisal — Solutions Architect",
-    description: "Solutions Architect focused on data platforms, AI systems, and architecture-to-delivery execution.",
+    title: "Ibrahim Faisal — Founder of Deadlock Labs",
+    description: "AI Systems Architect, Data Platform Builder, and founder of Deadlock Labs.",
     images: ["/og.svg"]
   }
 };

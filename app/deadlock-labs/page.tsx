@@ -1,75 +1,75 @@
 import Link from "next/link";
-import { ArrowUpRight, Bot, BrainCircuit, Globe2, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
+import { ArrowUpRight, Bot, BrainCircuit, FlaskConical, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
 import { StudioNav } from "@/components/studio-nav";
 
 const categories = [
   {
     title: "AI Systems",
-    description: "Products where AI handles context, conversation, translation, or structured decision support.",
-    ventures: [
+    description: "Ideas where AI handles context, conversation, translation, or structured decision support.",
+    explorations: [
       {
         slug: "bangla-translator",
         title: "Bangla Translator",
         status: "Prototype",
         icon: Languages,
-        thesis: "Sense-for-sense translation that preserves meaning, tone, and cultural context across Bangla and English.",
+        thesis: "Exploring sense-for-sense translation that preserves meaning, tone, and cultural context across Bangla and English."
       },
       {
         slug: "conversational-host-engine",
         title: "Conversational Host Engine",
-        status: "Concept",
+        status: "Researching",
         icon: Bot,
-        thesis: "A configurable AI host layer for guided interviews, onboarding flows, support intake, and interactive product experiences.",
-      },
-    ],
+        thesis: "Exploring AI hosts that can carry context, react to each other, and make interactive experiences feel alive."
+      }
+    ]
   },
   {
-    title: "Vertical SaaS",
-    description: "Narrow products for underserved operating niches where workflow pain is obvious and repeated.",
-    ventures: [
+    title: "Vertical Products",
+    description: "Focused product ideas for overlooked operational niches where the pain is obvious and repeated.",
+    explorations: [
       {
         slug: "sidekick",
         title: "SideKick",
-        status: "Concept",
+        status: "Seed idea",
         icon: Wrench,
-        thesis: "AI workforce for Australian trades, covering quoting, scheduling, customer follow-up, and admin work.",
+        thesis: "Exploring AI-native operations for Australian trades, starting with missed-call recovery and job follow-up."
       },
       {
         slug: "pally",
         title: "Pally",
-        status: "Concept",
+        status: "Seed idea",
         icon: Store,
-        thesis: "Loyalty infrastructure for ethnic grocery stores, designed around repeat purchasing and local community commerce.",
-      },
-    ],
+        thesis: "Exploring loyalty infrastructure for ethnic grocery stores and the communities that already support them."
+      }
+    ]
   },
   {
     title: "Interactive Experiences",
-    description: "Games and participatory products where content, competition, and mechanics create repeat engagement.",
-    ventures: [
+    description: "Playable ideas where content, competition, and mechanics create repeat engagement.",
+    explorations: [
       {
         slug: "world-cup-quiz-battle",
         title: "World Cup Quiz Battle",
         status: "Prototype",
         icon: Trophy,
-        thesis: "A football quiz game where answers influence match outcomes, turning trivia into a playable tournament format.",
-      },
-    ],
-  },
+        thesis: "Exploring whether football trivia can become a live match, where every answer changes the scoreline."
+      }
+    ]
+  }
 ];
 
 const metrics = [
-  { label: "Venture lanes", value: "3" },
-  { label: "Active concepts", value: "5" },
+  { label: "Exploration lanes", value: "3" },
+  { label: "Active ideas", value: "5" },
   { label: "Core themes", value: "AI + Data" },
-  { label: "Build mode", value: "Prototype first" },
+  { label: "Build mode", value: "Prototype first" }
 ];
 
 const principles = [
-  "Start from repeated operational pain, not technology theatre.",
-  "Build the smallest useful wedge before expanding the surface area.",
-  "Use AI where context, labour, or decision quality compounds.",
-  "Treat every concept as a testable system, not a pitch deck with better shoes.",
+  "Publish the thinking instead of leaving ideas in notebooks.",
+  "Start from repeated pain, not technology theatre.",
+  "Build the smallest useful version before expanding the surface area.",
+  "Share ideas with friends, colleagues, builders, and people who can sharpen the thinking."
 ];
 
 function statusClass(status: string) {
@@ -78,7 +78,7 @@ function statusClass(status: string) {
     : "border-border bg-muted text-muted-foreground";
 }
 
-export default function VentureStudio() {
+export default function DeadlockLabsPage() {
   return (
     <main className="min-h-screen">
       <StudioNav active="studio" />
@@ -87,24 +87,24 @@ export default function VentureStudio() {
         <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5" /> Venture Studio
+              <Sparkles className="h-3.5 w-3.5" /> Deadlock Labs
             </div>
             <h1 className="mt-6 max-w-4xl text-4xl font-light tracking-tight sm:text-6xl">
-              Building products at the intersection of AI, data, language, and community.
+              A personal lab for ideas, systems, prototypes, and future products.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
-              A product lab for startup explorations, practical prototypes, and focused venture bets. The studio turns repeated workflow pain into small systems that can be tested, sharpened, and scaled.
+              Deadlock Labs is where I share the brainchildren I am exploring across AI, data, language, communities, and interactive products. Some ideas will stay as thought experiments. Some become prototypes. A few might become something larger.
             </p>
           </div>
 
           <div className="rounded-3xl border bg-muted/30 p-6">
             <div className="flex items-center gap-3">
               <div className="rounded-2xl border bg-background p-3">
-                <BrainCircuit className="h-6 w-6" />
+                <FlaskConical className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-medium">Studio thesis</p>
-                <p className="text-sm text-muted-foreground">AI-native products for overlooked workflows.</p>
+                <p className="text-sm font-medium">Lab thesis</p>
+                <p className="text-sm text-muted-foreground">Build openly. Test carefully. Keep the useful ideas alive.</p>
               </div>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3">
@@ -122,11 +122,11 @@ export default function VentureStudio() {
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Portfolio map</p>
-            <h2 className="mt-3 text-3xl font-light tracking-tight">Venture categories</h2>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Lab map</p>
+            <h2 className="mt-3 text-3xl font-light tracking-tight">Areas of exploration</h2>
           </div>
           <p className="max-w-xl text-sm leading-7 text-muted-foreground">
-            Each category groups concepts by product behaviour rather than buzzword. Revolutionary stuff: sorting things by what they actually do.
+            These are not all companies. They are serious explorations: some product-shaped, some prototype-shaped, some still waiting for stronger validation.
           </p>
         </div>
 
@@ -139,28 +139,28 @@ export default function VentureStudio() {
                   <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">{category.description}</p>
                 </div>
                 <div className="inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground">
-                  <Network className="h-3.5 w-3.5" /> {category.ventures.length} concepts
+                  <Network className="h-3.5 w-3.5" /> {category.explorations.length} ideas
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                {category.ventures.map((venture) => {
-                  const Icon = venture.icon;
+                {category.explorations.map((exploration) => {
+                  const Icon = exploration.icon;
 
                   return (
-                    <Link key={venture.slug} href={`/venture-studio/${venture.slug}`} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
+                    <Link key={exploration.slug} href={`/deadlock-labs/${exploration.slug}`} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
                       <div className="flex items-start justify-between gap-4">
                         <div className="rounded-2xl border bg-muted/40 p-3">
                           <Icon className="h-5 w-5" />
                         </div>
-                        <span className={`rounded-full border px-3 py-1 text-xs ${statusClass(venture.status)}`}>
-                          {venture.status}
+                        <span className={`rounded-full border px-3 py-1 text-xs ${statusClass(exploration.status)}`}>
+                          {exploration.status}
                         </span>
                       </div>
-                      <h4 className="mt-5 text-lg font-medium tracking-tight">{venture.title}</h4>
-                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{venture.thesis}</p>
+                      <h4 className="mt-5 text-lg font-medium tracking-tight">{exploration.title}</h4>
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{exploration.thesis}</p>
                       <div className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition group-hover:text-foreground">
-                        Read concept <ArrowUpRight className="h-4 w-4" />
+                        Read idea <ArrowUpRight className="h-4 w-4" />
                       </div>
                     </Link>
                   );
@@ -175,9 +175,9 @@ export default function VentureStudio() {
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
-              <Globe2 className="h-3.5 w-3.5" /> Operating logic
+              <BrainCircuit className="h-3.5 w-3.5" /> Operating logic
             </div>
-            <h2 className="mt-5 text-3xl font-light tracking-tight">How ideas move through the studio</h2>
+            <h2 className="mt-5 text-3xl font-light tracking-tight">How ideas survive the lab</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {principles.map((principle, index) => (
