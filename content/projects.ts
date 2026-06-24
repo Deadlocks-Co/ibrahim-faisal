@@ -1,3 +1,6 @@
+export type ProjectStatus = "Live" | "Prototype" | "Concept";
+export type ProjectIdentity = "command-center" | "knowledge-map" | "toolkit" | "editorial";
+
 export interface Project {
   slug: string;
   title: string;
@@ -8,8 +11,10 @@ export interface Project {
   stack: string[];
   year: string;
   featured: boolean;
-  status?: "Live" | "Prototype" | "Concept";
+  status?: ProjectStatus;
   role?: string;
+  identity?: ProjectIdentity;
+  eyebrow?: string;
   metrics?: string[];
   links: { label: string; href: string }[];
 }
@@ -27,6 +32,8 @@ export const projects: Project[] = [
     featured: true,
     status: "Live",
     role: "Solutions Architect / Senior Consultant",
+    identity: "command-center",
+    eyebrow: "Live delivery engine",
     metrics: [
       "3-5 engineer-days reduced to under 90 minutes",
       "Six specialised agents coordinated through one delivery workflow",
@@ -49,6 +56,10 @@ export const projects: Project[] = [
     year: "2025",
     featured: true,
     status: "Prototype",
+    role: "Solution Designer",
+    identity: "knowledge-map",
+    eyebrow: "Context system",
+    metrics: ["Preserves decision trails", "Reduces context loss", "Connects project knowledge across workflows"],
     links: [{ label: "Case study", href: "#" }]
   },
   {
@@ -62,6 +73,10 @@ export const projects: Project[] = [
     year: "2025",
     featured: true,
     status: "Prototype",
+    role: "Platform Delivery Designer",
+    identity: "toolkit",
+    eyebrow: "Engineering toolkit",
+    metrics: ["Standardises delivery patterns", "Improves setup consistency", "Reduces implementation friction"],
     links: [{ label: "Case study", href: "#" }]
   },
   {
@@ -75,6 +90,10 @@ export const projects: Project[] = [
     year: "2026",
     featured: false,
     status: "Live",
+    role: "Designer / Developer",
+    identity: "editorial",
+    eyebrow: "Personal platform",
+    metrics: ["Content-driven structure", "Modular project pages", "Reusable publishing base"],
     links: [{ label: "Live", href: "#" }]
   }
 ];
