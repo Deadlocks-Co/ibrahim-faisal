@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const labLinks = [
-  { label: "Deadlock Labs", href: "/venture-studio" },
-  { label: "Thesis", href: "/venture-studio/thesis" },
-  { label: "Pipeline", href: "/venture-studio/pipeline" },
-  { label: "Founder Letter", href: "/founder" }
+  { label: "Deadlock Labs", href: "/deadlock-labs" },
+  { label: "Thesis", href: "/deadlock-labs/thesis" },
+  { label: "Pipeline", href: "/deadlock-labs/pipeline" },
+  { label: "Founder Letter", href: "/deadlock-labs/founder" }
 ];
 
 type StudioNavProps = {
@@ -12,10 +12,10 @@ type StudioNavProps = {
 };
 
 const activeByHref: Record<StudioNavProps["active"], string> = {
-  studio: "/venture-studio",
-  thesis: "/venture-studio/thesis",
-  pipeline: "/venture-studio/pipeline",
-  founder: "/founder"
+  studio: "/deadlock-labs",
+  thesis: "/deadlock-labs/thesis",
+  pipeline: "/deadlock-labs/pipeline",
+  founder: "/deadlock-labs/founder"
 };
 
 export function StudioNav({ active }: StudioNavProps) {
