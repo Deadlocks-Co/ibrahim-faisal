@@ -11,12 +11,12 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
 export const metadata: Metadata = {
-  title: "Ibrahim Faisal — Software Engineer",
-  description: "Autonomous AI systems, cloud-native data platforms, and architecture-to-delivery execution.",
+  title: "Ibrahim Faisal — Data Engineer",
+  description: "Data Engineer building AI-assisted delivery systems, cloud-native data platforms, and large-scale analytics workflows.",
   metadataBase: new URL(siteUrl),
   openGraph: {
-    title: "Ibrahim Faisal — Software Engineer",
-    description: "Autonomous AI systems, cloud-native data platforms, and architecture-to-delivery execution.",
+    title: "Ibrahim Faisal — Data Engineer",
+    description: "Data Engineer building AI-assisted delivery systems, cloud-native data platforms, and large-scale analytics workflows.",
     url: siteUrl,
     siteName: "Ibrahim Faisal",
     images: [{ url: "/og.svg", width: 1200, height: 630, alt: "Ibrahim Faisal" }],
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ibrahim Faisal — Software Engineer",
-    description: "Autonomous AI systems, cloud-native data platforms, and architecture-to-delivery execution.",
+    title: "Ibrahim Faisal — Data Engineer",
+    description: "Data Engineer building AI-assisted delivery systems, cloud-native data platforms, and large-scale analytics workflows.",
     images: ["/og.svg"]
   }
 };
