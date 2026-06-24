@@ -1,0 +1,3 @@
+import { StudioNav } from '@/components/studio-nav';
+const stages=['Seed Idea','Researching','Prototype','Testing','Building'];
+export default function Page(){return <main><StudioNav active='pipeline'/><section className='mx-auto max-w-5xl px-6 py-20'><h1 className='text-5xl font-light'>Deadlock Labs Pipeline</h1><p className='mt-6 text-muted-foreground'>Where each idea sits in my thinking today.</p><div className='mt-10 grid gap-4 md:grid-cols-5'>{stages.map(s=><div key={s} className='rounded-2xl border p-5'><h2>{s}</h2></div>)}</div></section></main>}
