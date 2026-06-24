@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         permanent: true
       },
       {
+        source: "/venture-studio/:slug",
+        destination: "/deadlock-labs/:slug",
+        permanent: true
+      },
+      {
         source: "/founder",
         destination: "/deadlock-labs/founder",
         permanent: true
