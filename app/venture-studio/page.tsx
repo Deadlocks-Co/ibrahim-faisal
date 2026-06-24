@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Bot, BrainCircuit, Globe2, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
+import { StudioNav } from "@/components/studio-nav";
 
 const categories = [
   {
@@ -80,8 +81,10 @@ function statusClass(status: string) {
 export default function VentureStudio() {
   return (
     <main className="min-h-screen">
+      <StudioNav active="studio" />
+
       <section className="border-b">
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5" /> Venture Studio
