@@ -41,3 +41,25 @@ Update these first:
 ## Notes
 - OG image is provided as `public/og.svg`.
 - Placeholder photography files are SVGs so you can replace them later with real images.
+
+## SSH Setup for Multiple GitHub Accounts
+
+If you manage multiple GitHub accounts on the same machine, configure a separate SSH key per account.
+
+### 1. Generate a new SSH key
+```bash
+ssh-keygen -t ed25519 -C "your-email@example.com" -f ~/.ssh/id_ed25519_<alias>
+```
+
+### 2. Add to SSH agent
+```bash
+ssh-add ~/.ssh/id_ed25519_<alias>
+```
+
+### 3. Add public key to GitHub
+```bash
+cat ~/.ssh/id_ed25519_<alias>.pub | pbcopy
+```
+→ GitHub → Settings → SSH and GPG keys → New SSH key → Paste → Save
+
+### 4. Configure ~/.ssh/config
