@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-const studioLinks = [
-  { label: "Venture Studio", href: "/venture-studio" },
+const labLinks = [
+  { label: "Deadlock Labs", href: "/venture-studio" },
   { label: "Thesis", href: "/venture-studio/thesis" },
   { label: "Pipeline", href: "/venture-studio/pipeline" },
   { label: "Founder Letter", href: "/founder" }
@@ -22,9 +22,9 @@ export function StudioNav({ active }: StudioNavProps) {
   const activeHref = activeByHref[active];
 
   return (
-    <nav aria-label="Venture Studio navigation" className="mx-auto max-w-6xl px-6 pt-8">
+    <nav aria-label="Deadlock Labs navigation" className="mx-auto max-w-6xl px-6 pt-8">
       <div className="flex flex-wrap gap-2 rounded-2xl border bg-muted/20 p-2">
-        {studioLinks.map((link) => {
+        {labLinks.map((link) => {
           const isActive = link.href === activeHref;
 
           return (
