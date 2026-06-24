@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowUpRight, Bot, BrainCircuit, Globe2, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
 
 const categories = [
@@ -6,12 +7,14 @@ const categories = [
     description: "Products where AI handles context, conversation, translation, or structured decision support.",
     ventures: [
       {
+        slug: "bangla-translator",
         title: "Bangla Translator",
         status: "Prototype",
         icon: Languages,
         thesis: "Sense-for-sense translation that preserves meaning, tone, and cultural context across Bangla and English.",
       },
       {
+        slug: "conversational-host-engine",
         title: "Conversational Host Engine",
         status: "Concept",
         icon: Bot,
@@ -24,12 +27,14 @@ const categories = [
     description: "Narrow products for underserved operating niches where workflow pain is obvious and repeated.",
     ventures: [
       {
+        slug: "sidekick",
         title: "SideKick",
         status: "Concept",
         icon: Wrench,
         thesis: "AI workforce for Australian trades, covering quoting, scheduling, customer follow-up, and admin work.",
       },
       {
+        slug: "pally",
         title: "Pally",
         status: "Concept",
         icon: Store,
@@ -42,6 +47,7 @@ const categories = [
     description: "Games and participatory products where content, competition, and mechanics create repeat engagement.",
     ventures: [
       {
+        slug: "world-cup-quiz-battle",
         title: "World Cup Quiz Battle",
         status: "Prototype",
         icon: Trophy,
@@ -139,7 +145,7 @@ export default function VentureStudio() {
                   const Icon = venture.icon;
 
                   return (
-                    <article key={venture.title} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
+                    <Link key={venture.slug} href={`/venture-studio/${venture.slug}`} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
                       <div className="flex items-start justify-between gap-4">
                         <div className="rounded-2xl border bg-muted/40 p-3">
                           <Icon className="h-5 w-5" />
@@ -153,7 +159,7 @@ export default function VentureStudio() {
                       <div className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition group-hover:text-foreground">
                         Read concept <ArrowUpRight className="h-4 w-4" />
                       </div>
-                    </article>
+                    </Link>
                   );
                 })}
               </div>
