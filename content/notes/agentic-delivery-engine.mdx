@@ -11,6 +11,7 @@ tags:
   - data-engineering
   - multi-agent
 draft: false
+thumbnail: /thumbnails/agentic-delivery-engine.png
 shareText: |
   We built a peer review loop into our agentic data platform.
 
@@ -22,7 +23,7 @@ shareText: |
   → PROGRESS.md makes every run idempotent — the agent picks up where it left off
   → promoted-patterns.md accumulates findings across sessions and loads as a checklist on every future run
 
-  Full architecture breakdown on the blog.
+  Full architecture breakdown in the lab notes.
 ---
 
 The peer reviewer in our system is not a different prompt. It is a different model, routed to a separate API endpoint, with a system prompt written to refute rather than produce. That single decision changes what gets caught — and why.

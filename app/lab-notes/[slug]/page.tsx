@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getCollection, getItem } from "@/lib/content";
+import { buildMetadata } from "@/lib/og";
 import { MdxPre } from "@/components/mdx-pre";
 import { ShareButton } from "@/components/share-button";
 
@@ -16,10 +18,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const note = getItem("notes", slug);
   if (!note) return { title: "Lab Notes — Ibrahim Faisal" };
-  return {
+  return buildMetadata({
     title: `${String(note.title)} — Ibrahim Faisal`,
-    description: String(note.summary)
-  };
+    description: String(note.summary),
+    url: `/lab-notes/${slug}`,
+    image: note.thumbnail != null ? String(note.thumbnail) : undefined
+  });
 }
 
 export default async function LabNoteDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -34,6 +38,7 @@ export default async function LabNoteDetailPage({ params }: { params: Promise<{ 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ibrahimfaisal.com";
   const pageUrl = `${siteUrl}/lab-notes/${slug}`;
   const shareText = note.shareText != null ? String(note.shareText) : undefined;
+  const thumbnail = note.thumbnail != null ? String(note.thumbnail) : null;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-24">
@@ -57,6 +62,19 @@ export default async function LabNoteDetailPage({ params }: { params: Promise<{ 
           <ShareButton url={pageUrl} shareText={shareText} />
         </div>
       </header>
+
+      {thumbnail && (
+        <div className="mb-12 overflow-hidden rounded-2xl border">
+          <Image
+            src={thumbnail}
+            alt={String(note.title)}
+            width={1185}
+            height={944}
+            className="w-full object-cover"
+            priority
+          />
+        </div>
+      )}
 
       <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
         <MDXRemote source={note.body} options={{ mdxOptions }} components={{ pre: MdxPre }} />
