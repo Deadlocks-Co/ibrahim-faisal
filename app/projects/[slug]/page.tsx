@@ -108,17 +108,17 @@ function AgenticArchitecturePanel() {
       </div>
 
       <div className="mt-8 rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground">
-        <span className="font-mono">/ude discover</span>
+        <span className="font-mono">/adp discover</span>
         <span className="mx-2">·</span>
-        <span className="font-mono">/ude init</span>
+        <span className="font-mono">/adp init</span>
         <span className="mx-2">·</span>
-        <span className="font-mono">/ude develop</span>
+        <span className="font-mono">/adp develop</span>
         <span className="mx-2">·</span>
-        <span className="font-mono">/ude publish</span>
+        <span className="font-mono">/adp publish</span>
         <span className="mx-2">·</span>
-        <span className="font-mono">/ude diagnose</span>
+        <span className="font-mono">/adp diagnose</span>
         <span className="mx-2">·</span>
-        <span className="font-mono">/ude review-pr</span>
+        <span className="font-mono">/adp review-pr</span>
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-5">
