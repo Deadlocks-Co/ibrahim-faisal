@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { buildMetadata } from "@/lib/og";
 import { getCollection } from "@/lib/content";
 
@@ -21,28 +22,44 @@ export default function LabNotesPage() {
       </div>
 
       <div className="mt-12 space-y-px">
-        {notes.map((note) => (
-          <Link
-            key={note.slug}
-            href={`/lab-notes/${note.slug}`}
-            className="group flex flex-col gap-1 border-b border-border/50 py-5 hover:border-border"
-          >
-            <div className="flex items-start justify-between gap-6">
-              <p className="text-sm font-medium group-hover:text-foreground">{String(note.title)}</p>
-              <p className="shrink-0 text-xs text-muted-foreground">{String(note.updated || note.published || "")}</p>
-            </div>
-            <p className="text-sm leading-6 text-muted-foreground">{String(note.summary)}</p>
-            {Array.isArray(note.tags) && note.tags.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1.5">
-                {(note.tags as string[]).map((tag) => (
-                  <span key={tag} className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
-                    {tag}
-                  </span>
-                ))}
+        {notes.map((note) => {
+          const thumbnail = note.thumbnail != null ? String(note.thumbnail) : null;
+          return (
+            <Link
+              key={note.slug}
+              href={`/lab-notes/${note.slug}`}
+              className="group flex gap-5 border-b border-border/50 py-5 hover:border-border"
+            >
+              {thumbnail && (
+                <div className="hidden shrink-0 overflow-hidden rounded-lg border sm:block">
+                  <Image
+                    src={thumbnail}
+                    alt={String(note.title)}
+                    width={120}
+                    height={80}
+                    className="h-20 w-[120px] object-cover transition-opacity group-hover:opacity-90"
+                  />
+                </div>
+              )}
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <div className="flex items-start justify-between gap-6">
+                  <p className="text-sm font-medium group-hover:text-foreground">{String(note.title)}</p>
+                  <p className="shrink-0 text-xs text-muted-foreground">{String(note.updated || note.published || "")}</p>
+                </div>
+                <p className="text-sm leading-6 text-muted-foreground">{String(note.summary)}</p>
+                {Array.isArray(note.tags) && note.tags.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {(note.tags as string[]).map((tag) => (
+                      <span key={tag} className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </main>
   );
