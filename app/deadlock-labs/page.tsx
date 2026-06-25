@@ -1,62 +1,24 @@
 import Link from "next/link";
 import { ArrowUpRight, Bot, BrainCircuit, FlaskConical, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
+import type { ElementType } from "react";
 import { StudioNav } from "@/components/studio-nav";
+import { getCollection } from "@/lib/content";
 
-const categories = [
-  {
-    title: "AI Systems",
-    description: "Ideas where AI handles context, conversation, translation, or structured decision support.",
-    explorations: [
-      {
-        slug: "bangla-translator",
-        title: "Bangla Translator",
-        status: "Prototype",
-        icon: Languages,
-        thesis: "Exploring sense-for-sense translation that preserves meaning, tone, and cultural context across Bangla and English."
-      },
-      {
-        slug: "conversational-host-engine",
-        title: "Conversational Host Engine",
-        status: "Researching",
-        icon: Bot,
-        thesis: "Exploring AI hosts that can carry context, react to each other, and make interactive experiences feel alive."
-      }
-    ]
+const iconMap: Record<string, ElementType> = {
+  Languages, Bot, Wrench, Store, Trophy, BrainCircuit, Sparkles, Network, FlaskConical
+};
+
+const categoryMeta: Record<string, { description: string }> = {
+  "AI Systems": {
+    description: "Ideas where AI handles context, conversation, translation, or structured decision support."
   },
-  {
-    title: "Vertical Products",
-    description: "Focused product ideas for overlooked operational niches where the pain is obvious and repeated.",
-    explorations: [
-      {
-        slug: "sidekick",
-        title: "SideKick",
-        status: "Seed idea",
-        icon: Wrench,
-        thesis: "Exploring AI-native operations for Australian trades, starting with missed-call recovery and job follow-up."
-      },
-      {
-        slug: "pally",
-        title: "Pally",
-        status: "Seed idea",
-        icon: Store,
-        thesis: "Exploring loyalty infrastructure for ethnic grocery stores and the communities that already support them."
-      }
-    ]
+  "Vertical Products": {
+    description: "Focused product ideas for overlooked operational niches where the pain is obvious and repeated."
   },
-  {
-    title: "Interactive Experiences",
-    description: "Playable ideas where content, competition, and mechanics create repeat engagement.",
-    explorations: [
-      {
-        slug: "world-cup-quiz-battle",
-        title: "World Cup Quiz Battle",
-        status: "Prototype",
-        icon: Trophy,
-        thesis: "Exploring whether football trivia can become a live match, where every answer changes the scoreline."
-      }
-    ]
+  "Interactive Experiences": {
+    description: "Playable ideas where content, competition, and mechanics create repeat engagement."
   }
-];
+};
 
 const metrics = [
   { label: "Exploration lanes", value: "3" },
@@ -79,6 +41,14 @@ function statusClass(status: string) {
 }
 
 export default function DeadlockLabsPage() {
+  const ideas = getCollection("labs");
+
+  const grouped = Object.entries(categoryMeta).map(([title, meta]) => ({
+    title,
+    description: meta.description,
+    explorations: ideas.filter((idea) => idea.category === title)
+  })).filter((g) => g.explorations.length > 0);
+
   return (
     <main className="min-h-screen">
       <StudioNav active="studio" />
@@ -131,7 +101,7 @@ export default function DeadlockLabsPage() {
         </div>
 
         <div className="space-y-8">
-          {categories.map((category) => (
+          {grouped.map((category) => (
             <section key={category.title} className="rounded-3xl border p-5 sm:p-6">
               <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                 <div>
@@ -139,13 +109,14 @@ export default function DeadlockLabsPage() {
                   <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">{category.description}</p>
                 </div>
                 <div className="inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground">
-                  <Network className="h-3.5 w-3.5" /> {category.explorations.length} ideas
+                  <Network className="h-3.5 w-3.5" /> {category.explorations.length} {category.explorations.length === 1 ? "idea" : "ideas"}
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
                 {category.explorations.map((exploration) => {
-                  const Icon = exploration.icon;
+                  const Icon = iconMap[String(exploration.icon)] ?? BrainCircuit;
+                  const status = String(exploration.status);
 
                   return (
                     <Link key={exploration.slug} href={`/deadlock-labs/${exploration.slug}`} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
@@ -153,12 +124,12 @@ export default function DeadlockLabsPage() {
                         <div className="rounded-2xl border bg-muted/40 p-3">
                           <Icon className="h-5 w-5" />
                         </div>
-                        <span className={`rounded-full border px-3 py-1 text-xs ${statusClass(exploration.status)}`}>
-                          {exploration.status}
+                        <span className={`rounded-full border px-3 py-1 text-xs ${statusClass(status)}`}>
+                          {status}
                         </span>
                       </div>
-                      <h4 className="mt-5 text-lg font-medium tracking-tight">{exploration.title}</h4>
-                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{exploration.thesis}</p>
+                      <h4 className="mt-5 text-lg font-medium tracking-tight">{String(exploration.title)}</h4>
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{String(exploration.summary)}</p>
                       <div className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition group-hover:text-foreground">
                         Read idea <ArrowUpRight className="h-4 w-4" />
                       </div>
