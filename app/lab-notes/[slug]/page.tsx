@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { getCollection, getItem } from "@/lib/content";
+
+const mdxOptions = { remarkPlugins: [remarkGfm] };
 
 export function generateStaticParams() {
   return getCollection("notes").map((note) => ({ slug: note.slug }));
@@ -47,7 +50,7 @@ export default async function LabNoteDetailPage({ params }: { params: Promise<{ 
       </header>
 
       <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
-        <MDXRemote source={note.body} />
+        <MDXRemote source={note.body} options={{ mdxOptions }} />
       </article>
     </main>
   );

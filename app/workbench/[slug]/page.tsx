@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { getCollection, getItem } from "@/lib/content";
+
+const mdxOptions = { remarkPlugins: [remarkGfm] };
 
 export function generateStaticParams() {
   return getCollection("workbench").map((item) => ({ slug: item.slug }));
@@ -51,7 +54,7 @@ export default async function WorkbenchItemPage({ params }: { params: Promise<{ 
 
         {item.body && (
           <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none mt-10">
-            <MDXRemote source={String(item.body)} />
+            <MDXRemote source={String(item.body)} options={{ mdxOptions }} />
           </article>
         )}
 
