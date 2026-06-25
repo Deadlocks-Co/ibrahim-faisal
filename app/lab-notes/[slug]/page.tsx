@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getCollection, getItem } from "@/lib/content";
+import { MdxPre } from "@/components/mdx-pre";
 
 const mdxOptions = { remarkPlugins: [remarkGfm] };
 
@@ -50,7 +51,7 @@ export default async function LabNoteDetailPage({ params }: { params: Promise<{ 
       </header>
 
       <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
-        <MDXRemote source={note.body} options={{ mdxOptions }} />
+        <MDXRemote source={note.body} options={{ mdxOptions }} components={{ pre: MdxPre }} />
       </article>
     </main>
   );

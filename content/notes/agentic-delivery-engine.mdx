@@ -13,57 +13,138 @@ tags:
 draft: false
 ---
 
-The peer reviewer in our system is a different model from the generator — not a different prompt, a different model — routed to a separate API, with a system prompt designed to refute rather than produce. That difference is the whole point.
+The peer reviewer in our system is not a different prompt. It is a different model, routed to a separate API endpoint, with a system prompt written to refute rather than produce. That single decision changes what gets caught — and why.
 
-Here's what we learned building it.
+Here is the architecture, with the reasoning behind each part.
 
 ## The Platform
 
-`vivanti-adp` is a structured knowledge base that Claude Code reads at the start of every session. It encodes how Vivanti delivers data consulting engagements: six agent role definitions, reusable delivery skills, engagement contexts (data contract, repos config, client stack), domain knowledge playbooks, a memory system, and automation hooks. When you open Claude Code inside `vivanti-adp`, it loads your identity, your active engagements, and the routing rules that determine which agent owns which task.
+`vivanti-adp` is a structured knowledge base that Claude Code reads at session start. It encodes Vivanti's delivery methodology as machine-readable files: six agent role definitions, reusable skill workflows, engagement contexts (data contract, repos config, client stack notes), domain knowledge playbooks, a memory system, and automation hooks.
 
-The delivery lifecycle runs in four commands: `discover → init → develop → document`.
+`adp-runner` lives inside `vivanti-adp` as the command center — a Next.js web app that makes the `develop` step runnable in a browser. You give it a command and an engagement name. It reads everything relevant from `vivanti-adp` at runtime and runs a streaming multi-agent loop.
 
-`adp-runner` is the command center — a Next.js web app that runs the `develop` step as a streaming multi-agent loop in a browser. You give it a command and an engagement name. It reads context from `vivanti-adp` at runtime — the data contract, the agent definitions, the current tasks list, the accumulated memory — and starts generating artefacts: Snowflake DDL, dbt models, Terraform, CI/CD pipelines.
+The delivery lifecycle has four commands:
 
-The output is not a markdown response in a chat window. It is code on a branch with a PR, ready for a human to review and merge. The agent never merges.
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart LR
+    A[Discover\nReadiness check] --> B[Init\nGenerate tasks]
+    B --> C[Develop\nBuild + review]
+    C --> D[Document\nConfluence docs]
+    style A fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style B fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style C fill:#fdf0eb,stroke:#bc5a3a,stroke-width:2px
+    style D fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+```
+
+`adp-runner` runs the `develop` step. The others run via Claude Code directly inside `vivanti-adp`.
+
+## What the Develop Step Does
+
+The per-task cycle has seven steps, in order:
+
+1. **Start** — read `PROGRESS.md` for idempotency; skip any task marked `HANDOVER` or `DONE`; pick the next eligible task from `tasks.md` by dependency order
+2. **Load craft** — load the owning agent file, the contract sections that agent requires, and any applicable `knowledge/domain/` playbooks; check `memory/patterns/promoted-patterns.md` for recurring issues from prior sessions
+3. **Build** — generate artefacts; branch naming follows `{type}/{scope}/{description}` from `repos.yml`; run local validation (`terraform validate` / `dbt parse` / `sqlfluff`)
+4. **First PR** — commit, push, raise the PR against the target branch from `repos.yml`
+5. **Independent review** — hand the artefact to the peer reviewer (separate model, adversarial system prompt)
+6. **Fix** — address every finding or record an explicit won't-fix; re-run local checks; push fixes to the same branch
+7. **Handover** — mark PR ready for human review; transition Jira issue to *In Review*; **stop**
+
+The agent never merges. One task = one branch = one PR. The rule is enforced by `branch-guard.sh` as a pre-tool hook.
+
+## Inside the API Route
+
+The backend is a single Next.js API route — 539 lines, no database, no queue, no microservices.
+
+On every POST request it:
+
+1. Validates the engagement name against `/^[a-z0-9_-]+$/` — no path traversal
+2. Loads server-side artifacts: `tasks.md`, `PROGRESS.md`, and `memory/patterns/promoted-patterns.md` if they exist
+3. Assembles the full context with `buildContent()` — merging the three uploaded files (context, contract, repos) with the server-loaded artifacts and the command instruction loaded from `.claude/commands/ude/{command}.md`
+4. Opens a `ReadableStream` emitting SSE events to the browser
+5. Spawns the main agent stream and pipes `BlockDetector` over it concurrently
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart TD
+    A["POST /api/run"] --> B["Validate & load\nengagement artifacts"]
+    B --> C["buildContent()\nmerge context + command"]
+    C --> D["Claude Sonnet 4.6\nclient.messages.stream"]
+    D -->|"token delta"| E["BlockDetector\nfeed(chunk)"]
+    D -->|"SSE events"| F["Browser\nstream parser"]
+    E -->|"block closes"| G["reviewArtifact()\nGemini 2.5 Flash"]
+    G -->|"FAIL"| H["fixArtifact()\nClaude Sonnet 4.6"]
+    H -->|"fixed block"| G
+    G -->|"PASS"| I["Promise all\ncollect results"]
+    I --> J["Write PROGRESS.md\nslack_channel.md"]
+    style A fill:#fdf0eb,stroke:#bc5a3a,stroke-width:1px
+    style D fill:#fdf0eb,stroke:#bc5a3a,stroke-width:1px
+    style G fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style H fill:#fdf0eb,stroke:#bc5a3a,stroke-width:1px
+    style J fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+```
+
+The SSE stream sends `{ type: 'text', content }` events for streamed tokens, `{ type: 'done' }` on completion, and `{ type: 'error', message }` on failure.
 
 ## Why Different Models
 
-The main agent is Claude Sonnet 4.6, called via the Anthropic SDK with `client.messages.stream`. It streams tokens to the browser and structures its output with markers parsed client-side:
+The main agent is Claude Sonnet 4.6 via the Anthropic SDK. The peer reviewer is Gemini 2.5 Flash via an OpenAI-compatible LLM gateway (`LLM_GATEWAY_URL`, `LLM_GATEWAY_KEY`).
 
-```
-[AGENT: Data Engineer]
-[SKILL: schemachange-gen]
-[STATUS: aurora_contacts DDL coming up — watching the nulls on phone_number.]
-```
-
-The peer reviewer is Gemini 2.5 Flash, called via an OpenAI-compatible LLM gateway.
-
-A reviewer that shares the generator's training distribution is not a reviewer. It will miss what the generator missed, because it missed it for the same reasons. Routing to a different model with a different system prompt changes the failure modes. The peer reviewer's prompt opens with:
+A reviewer sharing the generator's training distribution does not provide adversarial distance — it replays the same failure modes. Routing to a different model family means different pretraining data, different RLHF signal, different tendencies. The reviewer's system prompt reinforces the distance:
 
 > You are a senior data engineer reviewing a teammate's PR. You're direct, you find real problems, and you write like a person — not a system.
 
-Its output is structured for machine parsing:
+Its output format is machine-parseable:
 
 ```
 [VERDICT: PASS | PASS WITH NOTES | FAIL]
 
 [CRITICAL] phone_number VARCHAR(15) — exceeds contract maximum of VARCHAR(20)
-[MINOR] Missing load_ts audit column — required on all raw tables
+[MAJOR] aurora_contacts missing dedup key — required per contract section 4.2
+[MINOR] Missing load_ts audit column
 ```
 
-CRITICAL findings restart the fix loop. MINOR findings surface in the audit log. PASS moves the artefact to handover.
+The runner parses verdict and severity counts from the raw text. `CRITICAL` count drives escalation decisions. `MINOR` findings land in the audit log without blocking the cycle.
 
-## BlockDetector: Don't Wait for the Full Response
+## BlockDetector: Concurrent Review During Generation
 
-The naive implementation: let the main agent finish, then send everything to the reviewer. Simple, sequential, slow.
+Naive sequencing: generate fully, then review. Wall-clock cost: generation time + review time.
 
-A full develop run produces multiple code blocks, each taking 20–30 seconds to generate. Waiting until the last block closes before reviewing the first wastes most of that time.
-
-`BlockDetector` is a line-buffered stream processor that watches for triple-backtick boundaries as tokens arrive:
+`BlockDetector` breaks that sequence. It feeds on the token stream as it arrives, watching for triple-backtick boundaries:
 
 ```ts
 class BlockDetector {
+  private lineBuf = ''
+  private inBlock = false
+  private blockLines: string[] = []
+
   feed(text: string): void {
     const combined = this.lineBuf + text
     const lines = combined.split('\n')
@@ -85,27 +166,52 @@ class BlockDetector {
 }
 ```
 
-The instant a block closes, a callback fires an async IIFE that pushes into a `Promise<ReviewResult>[]` array. The main stream continues generating. After the stream finishes, `await Promise.all(pendingReviews)` collects every result.
+The instant a block closes, the callback fires an async IIFE that pushes a `Promise<ReviewResult>` into the pending array. The main stream continues. After `stream.finalMessage()`, `await Promise.all(pendingReviews)` collects every result.
 
-If the main agent generates five code blocks, blocks one through four are in peer review while the main agent writes block five. On a typical develop run, this saves 30–60 seconds.
+If the main agent produces five blocks, blocks one through four are in peer review concurrently while block five is still being written. On a typical develop run — three to five blocks per task — this saves 30–60 seconds against sequential review.
 
 ## Smart Artefact Naming
 
-Before a block goes to the reviewer, it needs a name — so the reviewer can reference it, the status messages can name it, and the audit log can track it. The `blockName` function tries five extraction strategies in order:
+Before a block goes to the reviewer, it needs a name. `blockName()` tries five extraction strategies in order:
 
-1. **Filename comment on the first content line** — the system prompt requires all code blocks to start with a comment like `-- contacts_raw.sql` or `# pipeline.yml`. This is the primary signal.
-2. **SQL DDL** — regex on `CREATE TABLE/VIEW/PROCEDURE` extracts the object name.
-3. **SQL DML** — regex on `INSERT INTO` or `MERGE INTO` extracts the target table.
-4. **Python** — extracts the first `def` or `class` name.
-5. **YAML** — extracts the `name:` key.
+```ts
+function blockName(block: string, seq: number): string {
+  // 1. Filename comment: -- contacts_raw.sql / # pipeline.py
+  const firstContent = block.split('\n')[1] ?? ''
+  const commentMatch = firstContent.match(
+    /--\s*(\S+\.sql)|#\s*(\S+\.(?:py|yml|yaml))|\/\/\s*(\S+\.\w+)/
+  )
+  if (commentMatch) return commentMatch[1] ?? commentMatch[2] ?? commentMatch[3]
 
-If none match, it falls back to `artefact N`. In practice, the filename comment requirement on the system prompt means strategy one fires almost every time. The fallback exists because models occasionally drift from the instruction.
+  // 2. SQL DDL — CREATE TABLE / VIEW / PROCEDURE / TASK / STREAM
+  const ddlMatch = block.match(
+    /CREATE(?:\s+OR\s+REPLACE)?(?:\s+TRANSIENT)?\s+(?:TABLE|VIEW|PROCEDURE|TASK|STREAM)\s+(?:[\w$]+\.)*?([\w$]+)\s*[(\n]/i
+  )
+  if (ddlMatch) return `${ddlMatch[1].toLowerCase()}.sql`
 
-## The Fix Loop: Knowing When to Stop
+  // 3. SQL DML — INSERT / MERGE target
+  const dmlMatch = block.match(
+    /(?:INSERT\s+(?:INTO\s+)?|MERGE\s+INTO\s+)(?:[\w$]+\.)*?([\w$]+)\s/i
+  )
+  if (dmlMatch) return `${dmlMatch[1].toLowerCase()}.sql`
 
-One review round catches issues. It does not guarantee a fix produces clean code. Fixing one thing can break another. You need iteration.
+  // 4. Python def / class
+  const pyMatch = block.match(/^(?:def|class)\s+([\w]+)/m)
+  if (pyMatch) return `${pyMatch[1]}.py`
 
-The loop is an unbounded `while` capped at `MAX_ROUNDS = 5`. On each FAIL verdict, the system identifies which agent should own the fix:
+  // 5. YAML name key
+  const yamlMatch = block.match(/^name:\s*(\S+)/m)
+  if (yamlMatch) return `${yamlMatch[1]}.yml`
+
+  return `artefact ${seq}`
+}
+```
+
+The system prompt requires every code block to open with a filename comment (`-- contacts_raw.sql`, `# pipeline.yml`). Strategy one fires almost every time. Strategies two through five exist because models occasionally drift from the instruction — rather than silently naming everything `artefact 3`, the runner extracts from the code structure itself.
+
+## The Fix Loop: Routing by Language
+
+On a FAIL verdict, the runner does not send the block back to the main agent generically. It infers which specialist should own the fix:
 
 ```ts
 function agentForBlock(block: string): string {
@@ -119,15 +225,9 @@ function agentForBlock(block: string): string {
 }
 ```
 
-The correct specialist fixes their own artefact — a dbt Engineer fixes Jinja templates, not a DevOps Engineer who happened to be last in the queue.
+A dbt Engineer fixes Jinja templates. A Platform Engineer fixes Terraform HCL. The fixer identity appears in the UI sidebar and the audit log — the team structure holds through the fix cycle, not just during generation.
 
-The loop exits on three conditions:
-
-1. **PASS or PASS WITH NOTES** — proceed to handover.
-2. **Stale fingerprint** — findings from round N match round N-1. The fix changed nothing meaningful. Escalate to human.
-3. **MAX_ROUNDS reached** — five rounds on the same artefact signals an issue the agent cannot resolve from the context it has.
-
-Stale detection normalises and hashes the finding lines:
+The loop itself is bounded at `MAX_ROUNDS = 5` with stale detection:
 
 ```ts
 function fingerprintFindings(reviewText: string): string {
@@ -140,119 +240,134 @@ function fingerprintFindings(reviewText: string): string {
 }
 ```
 
-A loop that detects its own futility and stops is more useful than one that retries to exhaustion.
+If the fingerprint from round N matches round N-1, the fix changed nothing meaningful. The loop emits `[STATUS: Stuck on {name} — same issues came back after the fix. Needs a human to look at this.]` and stops retrying. Exhausting `MAX_ROUNDS` triggers the same escalation path. Both are visible in `slack_channel.md`.
 
 ## Memory and Idempotency
 
-### PROGRESS.md: Idempotency Across Runs
+### PROGRESS.md
 
-The main agent emits a fenced `progress-md` block at the end of each develop cycle — a markdown table of every task, its status, the responsible agent, branch name, and notes:
+The develop command instruction ends with a hard requirement: after each task handover, the agent emits its full task table inside a fenced `progress-md` block. The runner parses it with a regex, appends the recurring-patterns section built from `buildPatternsSection()`, and writes it to `engagements/{name}/artifacts/PROGRESS.md`.
+
+On the next run, the route reads this file server-side and injects it into the agent context via `buildContent()`. The agent sees the table, reads the statuses, and skips `HANDOVER` and `DONE` tasks before picking the next eligible one.
 
 | Task | Description | Agent | Status | Date | Notes |
 |------|-------------|-------|--------|------|-------|
-| T-001 | Kickoff governance | Platform Engineer | HANDOVER | 2026-01-26 | — |
-| T-005 | aurora_contacts DDL | Data Engineer | HANDOVER | 2026-06-26 | branch: data-engineer/aurora-contacts |
+| T-001 | Kickoff governance | Platform Engineer | DONE | 2026-01-26 | — |
+| T-005 | aurora_contacts DDL | Data Engineer | HANDOVER | 2026-06-26 | branch: data/landing/aurora-contacts-ddl |
 
-The runner extracts this block from the output, appends any recurring-patterns section, and writes it to `engagements/{name}/artifacts/PROGRESS.md`. On the next run, it's loaded server-side and injected into the main agent's context. The agent reads it, sees `HANDOVER`, and skips those tasks.
+Running the same engagement twice gives incremental progress, not duplicated PRs.
 
-Run the same engagement twice and you get incremental progress, not duplicated work.
+### promoted-patterns.md: Cross-Session Craft Memory
 
-### promoted-patterns.md: Cross-Session Learning
+`extractCategories()` strips severities and values from each finding, extracting what the issue is about. `buildPatternsSection()` tallies categories across all artefacts in the run — if a category appears in two or more artefacts, it surfaces in `PROGRESS.md` under `## Patterns seen this run`.
 
-Every review round generates findings. The runner extracts the category from each finding — what it's about, stripped of the specific value — and tallies them across all artefacts in the run. If a category appears in two or more artefacts in a single run, it surfaces in `PROGRESS.md` as a recurring pattern.
+When a pattern appears in three or more sessions, it gets promoted to `memory/patterns/promoted-patterns.md`. The route loads this file on every run and injects it via `buildContent()`. The agent reads it as a checklist before generating anything and emits:
 
-If that pattern appears across three or more sessions, it gets promoted to `memory/patterns/promoted-patterns.md`. That file loads into every future run's context as a checklist the main agent reads before generating anything.
+```
+[STATUS: Checked against memory/patterns — 3 patterns apply to this stack.]
+```
 
-The pattern memory is the closest thing we have to institutional knowledge that survives across sessions and engagements.
+The memory system accumulates across engagements, not just within one.
 
-## What the Agents Sound Like
+## The UI Stream Parser
 
-The system prompt defines a Voice section that applies to prose commentary only — not to code, not to structured markers:
+The browser receives SSE events and parses them incrementally. The stream parser holds a rolling buffer and processes markers as complete `[TYPE: value]` sequences appear:
 
-> Write like an engineer typing in Slack. Short sentences, no fluff. Never: "I will now", "As requested". Use: "done", "watch the nulls here", "LGTM."
+```ts
+function createParser(handlers: ParseHandlers) {
+  let buf = ''
+  return {
+    push(chunk: string) {
+      buf += chunk
+      while (true) {
+        const open = buf.indexOf('[')
+        if (open === -1) { flush(buf); buf = ''; break }
+        if (open > 0) { flush(buf.slice(0, open)); buf = buf.slice(open) }
+        const close = buf.indexOf(']')
+        if (close === -1) break
+        const m = buf.slice(0, close + 1).match(/^\[(AGENT|SKILL|PLAYBOOK|STATUS):\s*([^\]]+)\]/)
+        if (m) {
+          const [, type, name] = m
+          if (type === 'AGENT') handlers.onAgent(name.trim())
+          else if (type === 'SKILL') handlers.onSkill(name.trim())
+          else if (type === 'STATUS') handlers.onStatus(name.trim())
+          buf = buf.slice(close + 1)
+          if (buf.startsWith('\n')) buf = buf.slice(1)
+        } else { flush('['); buf = buf.slice(1) }
+      }
+    }
+  }
+}
+```
 
-Each agent has a distinct personality baked into the prompt. The Data Engineer is pragmatic, mildly skeptical of messy data. The dbt Engineer is detail-obsessed. The Platform Engineer treats infrastructure cost as a first-class concern. The Peer Reviewer is encouraging but does not soften findings.
+`[AGENT:]` markers update the active agent in the sidebar. Each agent has a defined color: Platform Engineer (`#93c5fd`), Data Engineer (`#86efac`), dbt Engineer (`#fcd34d`), DevOps (`#f9a8d4`), Technical Writer (`#c4b5fd`), Report Developer (`#fdba74`). The sidebar highlights the active agent as work progresses. `[STATUS:]` messages feed the ticker at the bottom of the screen.
 
-The tone change was not cosmetic. Early output read like a formal audit report. Nobody wants to read that in a consulting context. The Slack-style voice makes the output feel like a team communicating, not a system generating.
+## The Audit Log
 
-After each run, the runner parses the `[AGENT:]` markers, combines them with the peer review entries, and appends a timestamped block to `slack_channel.md`:
+After every run, the route parses all `[AGENT:]` markers from the full streamed text, combines them with peer review entries collected during the concurrent review phase, and appends a timestamped block to `engagements/{name}/artifacts/slack_channel.md`:
 
 ```
 ## Run: 2026-06-26 14:30
 
-[Data Engineer]
-Starting on T-005. Aurora contacts DDL coming up.
+**[Data Engineer]**
+Starting on T-005. Aurora contacts DDL coming up. watch the nulls on phone_number.
 
-[Peer Reviewer]
+**[Peer Reviewer]**
 Solid work, but two issues:
 [CRITICAL] phone_number VARCHAR(15) — exceeds contract maximum
 [MINOR] Missing load_ts audit column
 
-[Data Engineer]
+**[Data Engineer]**
 Fixed both. Pushing.
 
-[Peer Reviewer]
+**[Peer Reviewer]**
 LGTM. contacts_raw.sql — all good.
 ```
 
-Append-only. Every run adds a new block. You end up with a complete audit trail of every decision, finding, and handoff — without reading raw model output.
+Append-only. Second run adds a new `## Run:` block. The file becomes a chronological record of every decision, finding, fix, and handoff across the engagement's full history.
 
 ## What It Can Do Today
 
 | Feature | Status |
 |---------|--------|
-| Multi-agent team (6 roles) | ✅ |
-| SSE streaming with live agent/skill tracking | ✅ |
+| Multi-agent team (6 roles, color-coded in UI) | ✅ |
+| SSE streaming with live agent/skill/status tracking | ✅ |
 | Async per-artefact peer review (Gemini 2.5 Flash) | ✅ |
+| Concurrent review during generation via BlockDetector | ✅ |
 | Unbounded fix loop with stale fingerprint detection | ✅ |
-| Smart artefact naming from code content | ✅ |
-| Agent-aware fix routing (dbt Engineer fixes dbt, Platform fixes Terraform) | ✅ |
-| PROGRESS.md idempotency across runs | ✅ |
-| Per-run recurring-pattern detection | ✅ |
-| promoted-patterns.md cross-session memory | ✅ |
+| Language-aware fix routing (agentForBlock) | ✅ |
+| Smart artefact naming from code content (5 strategies) | ✅ |
+| PROGRESS.md idempotency — written from fenced agent output | ✅ |
+| Per-run recurring-pattern detection and surfacing | ✅ |
+| promoted-patterns.md cross-session craft memory | ✅ |
 | slack_channel.md append-only audit log | ✅ |
-| Command file loading from markdown (develop, init, discover, document) | ✅ |
-| Slack-channel persona voice per agent | ✅ |
+| Command instruction loading from `.claude/commands/ude/*.md` | ✅ |
+| Server-side context assembly (tasks, progress, patterns) | ✅ |
+| Engagement name validation (`/^[a-z0-9_-]+$/`) | ✅ |
 
 ## What You Should Build Next
 
-### 1. Actual Git Integration
+**Git integration.** The agent describes branches and PRs. The runner does not create them. Wiring in real git operations — `git checkout -b`, commit, push, Bitbucket/GitHub API for PR creation — closes the loop from "agent says it raised a PR" to "PR exists in the repo with a URL in Jira."
 
-The agent talks about raising a PR. The runner doesn't do it. Wiring in real git operations — branch creation, commits, Bitbucket/GitHub API calls — closes the loop from "agent describes a branch" to "PR exists for human review." This is the highest-value gap.
+**Jira integration.** The develop command specification requires a Jira comment after every cycle step. The runner does not post them. An MCP server or REST client for Jira would give every cycle a real audit trail in the project tracker, not just in `slack_channel.md`.
 
-### 2. Jira / Linear Integration
+**Validator pass before peer review.** `sqlfluff`, `dbt parse`, `terraform validate` catch deterministic errors that model review misses — broken `ref()` calls, syntax errors, bad HCL. Running validators between generation and peer review, then passing their output as context to the reviewer, would reduce false PASS verdicts on structurally invalid artefacts.
 
-The develop command instructs the agent to log an issue after every step. It describes what the Jira ticket would say. It doesn't create one. An MCP server or REST client for Jira would give every cycle a real audit trail in your project tracker, not just in `PROGRESS.md`.
+**Cost tracking per run.** Token usage across two models with no visibility into spend. A `$cost` line in `PROGRESS.md` — input tokens, output tokens, rough dollar cost — matters in a consulting context where token spend maps to delivery margin.
 
-### 3. Validator Integration
+**Approval gate between tasks.** "Stop" is a convention. The agent marks a task `HANDOVER` and stops. There is no actual pause mechanism that requires human acknowledgement before the next task starts in loop mode. An explicit approval gate — "PR raised for T-005. Approve to continue to T-006." — makes the human decision point real, not implied.
 
-Peer review is model-based. Models are not interpreters — `sqlfluff` catches style errors, `dbt parse` catches broken `ref()` calls, `terraform validate` catches bad HCL. Running a validator between generation and peer review, then passing its output as additional context to the reviewer, would surface real failures before the model review even starts.
-
-### 4. Cost Tracking
-
-Every run consumes tokens across two models with no visibility into how much. A `$cost` summary line in `PROGRESS.md` — input tokens, output tokens, rough dollar cost — would make this production-usable in a consulting context where token spend maps directly to delivery margin.
-
-### 5. Multi-Engagement Parallelism
-
-One engagement per browser tab. A proper job queue with per-engagement run history would make this a usable tool for a team running three concurrent client engagements.
-
-### 6. Human-in-the-Loop Approval Gate
-
-"Stop" is currently a convention in `PROGRESS.md` — the agent marks tasks `HANDOVER` and stops generating. There is no actual pause mechanism. An explicit approval gate — "PR raised on aurora/T-005. Review and approve before the next task." — would make the human decision point trackable, not implied.
-
-### 7. Promoted-Pattern Automation
-
-Promoting a pattern from `PROGRESS.md` to `promoted-patterns.md` is manual right now. An agent that reads episodic memory across recent runs, identifies categories appearing three or more times, and surfaces them for human promotion would close the learning loop without needing someone to go looking for it.
+**Promoted-pattern automation.** Today, promoting a pattern from `## Patterns seen this run` in `PROGRESS.md` to `promoted-patterns.md` is manual. An agent that reads episodic history across sessions, identifies categories meeting the three-session threshold, and proposes a promotion with human approval would close the learning loop without relying on someone to go looking for it.
 
 ## The Honest Reflection
 
-We built this in a few weeks of evenings and weekends. It runs real delivery cycles on a real client engagement. The peer review catches genuine issues. The fix loop converges. The idempotency mechanism prevents duplicate work. The audit log is actually useful.
+This was built over a few weeks of evenings and weekends. It runs real delivery cycles on a real client engagement. The cross-model peer review catches genuine issues. `agentForBlock` routing means the right specialist fixes their own artefact. Stale fingerprint detection means the loop knows when to stop. The idempotency mechanism means re-running a session doesn't duplicate work.
 
-It is not production software. Error handling is minimal. There is no auth. The UI has one hardcoded default engagement. The memory system is flat markdown files read at startup. The git and Jira integrations are theatrical.
+It is not production software. Error handling is minimal. There is no auth layer. The UI defaults to one hardcoded engagement. The memory system is flat markdown files read at startup. The git and Jira integrations are described, not wired.
 
-That's fine. A prototype's job is to answer whether the architecture is worth building properly. The answer here is yes. Cross-model adversarial review finds things a single model misses. Concurrent review against a stream saves real time. Stale fingerprint detection knows when to stop. Pattern memory accumulates across sessions.
+That is fine. A prototype's job is to answer whether the architecture is sound. The answer is yes on every dimension that matters: the loop converges, the quality is usable, the audit trail is readable, the memory accumulates correctly.
 
-The answer to the headline question — what happens when you make agents review each other's work — is: you catch what a single model misses, you build an audit trail that reads like a team, and you create a feedback loop that gets marginally smarter every run.
+The highest-value next step is real git operations. Everything else in the "What to Build Next" list depends on that being real rather than theatrical. Start there.
 
 ---
 
