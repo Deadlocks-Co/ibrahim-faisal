@@ -1,6 +1,31 @@
 # Changelog
 
-## Unreleased — Sprint 02: Publishing Foundation
+## Unreleased — Sprint 03: Lab Notes Foundation
+
+### Added
+
+- `content/notes/agentic-delivery-observations.mdx` — first real lab note
+- `app/lab-notes/page.tsx` — Lab Notes listing page backed by MDX loader
+- `app/lab-notes/[slug]/page.tsx` — Lab Notes detail page with MDX body rendering
+- `components/lab-notes-preview.tsx` — homepage preview for Lab Notes
+- `docs/sprints/sprint-03.md` — sprint record
+- `docs/decisions/0004-mdx-body-rendering.md` — ADR for MDX body rendering decision
+
+### Changed
+
+- `app/page.tsx` — replaced `<WritingPreview />` with `<LabNotesPreview />`
+- `content/nav.ts` — "Writing" renamed to "Lab Notes", links `/lab-notes`
+- `next.config.ts` — added permanent redirect `/writing` → `/lab-notes`
+- `tailwind.config.ts` — registered `@tailwindcss/typography` plugin
+
+### Dependencies
+
+- Added: `next-mdx-remote` (MDX body rendering in React Server Components)
+- Added (dev): `@tailwindcss/typography` (prose styling)
+
+---
+
+## Sprint 02: Publishing Foundation
 
 ### Added
 

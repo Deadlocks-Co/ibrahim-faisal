@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 03: Lab Notes Foundation (candidate)
+Sprint 03: Lab Notes Foundation
 
 ## Current Focus
 
-Sprint 02 is complete. Workbench is MDX-backed. The publishing foundation is in place.
+Sprint 03 is complete. Lab Notes is live, MDX body rendering is wired, and the first real note is published.
 
-Sprint 03 will build Lab Notes on top of `lib/content.ts`.
+Sprint 04 candidate: Deadlock Labs content migration or Photography section improvements.
 
 ## Operating Rules
 
@@ -113,16 +113,70 @@ Sprint 03 will build Lab Notes on top of `lib/content.ts`.
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/publishing-foundation` into `main`.
 
+## Sprint 3 Tasks — Complete
+
+### 1. MDX Body Rendering
+
+- [x] Evaluate and select a body rendering approach.
+- [x] Install `next-mdx-remote` for RSC-compatible MDX rendering.
+- [x] Install `@tailwindcss/typography` for prose styling.
+- [x] Update `tailwind.config.ts` to register the typography plugin.
+- [x] Decision documented in `docs/decisions/0004-mdx-body-rendering.md`.
+
+### 2. First Real Lab Note
+
+- [x] Write one substantive lab note in `content/notes/`.
+- [x] Full frontmatter: title, slug, summary, published, updated, tags, draft.
+- [x] Body: 400–600 words, real observations, not placeholder content.
+- [x] `content/notes/.gitkeep` removed now that the directory has real content.
+
+### 3. Lab Notes Routes
+
+- [x] `app/lab-notes/page.tsx` listing page using `getCollection("notes")`.
+- [x] `app/lab-notes/[slug]/page.tsx` detail page with MDX body rendering.
+- [x] Title, summary, dates, and tags shown in the page header.
+- [x] `generateStaticParams` wired for static generation.
+
+### 4. Homepage and Navigation
+
+- [x] `components/lab-notes-preview.tsx` created, matching WorkbenchPreview style.
+- [x] `app/page.tsx` updated: `<WritingPreview />` replaced with `<LabNotesPreview />`.
+- [x] `content/nav.ts` updated: "Writing" → "Lab Notes" linking `/lab-notes`.
+- [x] `next.config.ts` updated: `/writing` permanently redirects to `/lab-notes`.
+
+### 5. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-03.md` added.
+- [x] `docs/decisions/0004-mdx-body-rendering.md` added.
+- [x] `CHANGELOG.md` Sprint 03 section added.
+
+### 6. Quality Gate
+
+- [x] Build passes.
+- [x] TypeScript compiles.
+- [x] No broken routes.
+- [x] No direct commits to `main`.
+- [x] No placeholder content shipped.
+- [x] `/writing` redirect confirmed.
+
+## Definition of Done — Sprint 3
+
+- [x] `/lab-notes` listing renders real notes from MDX.
+- [x] `/lab-notes/[slug]` renders formatted body content.
+- [x] Homepage shows Lab Notes preview instead of Writing.
+- [x] Navigation shows "Lab Notes".
+- [x] `/writing` redirects to `/lab-notes`.
+- [x] One real lab note published.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/lab-notes-foundation` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 03: Lab Notes Foundation
+Sprint 04: Deadlock Labs content migration or Photography improvements.
 
-Expected focus:
+Expected focus (TBD):
 
-- Create `/lab-notes` listing page.
-- Create `/lab-notes/[slug]` detail page.
-- Use `lib/content.ts` from Sprint 02.
-- Add real lab notes as MDX files under `content/notes/`.
-- Evaluate whether MDX body rendering (`next-mdx-remote` or `@next/mdx`) is needed for rich content.
-- Replace the old Writing concept with Lab Notes in navigation.
-- Introduce notebook-style writing conventions.
+- Migrate Deadlock Labs ideas into `content/labs/*.mdx`.
+- Or improve the Photography section with better layout and metadata.
+- Or introduce Lab Notes search/filtering if note volume warrants it.
