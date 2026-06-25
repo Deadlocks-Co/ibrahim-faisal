@@ -11,6 +11,18 @@ tags:
   - data-engineering
   - multi-agent
 draft: false
+shareText: |
+  We built a peer review loop into our agentic data platform.
+
+  Not a different prompt — a different model. Claude Sonnet 4.6 generates the artefacts. Gemini 2.5 Flash is wired as an adversarial reviewer with one job: find what's wrong.
+
+  The interesting parts:
+  → Reviews fire per code block, not after the full response — saves 30–60s per run
+  → A stale fingerprint detector stops the fix loop when findings stop changing
+  → PROGRESS.md makes every run idempotent — the agent picks up where it left off
+  → promoted-patterns.md accumulates findings across sessions and loads as a checklist on every future run
+
+  Full architecture breakdown on the blog.
 ---
 
 The peer reviewer in our system is not a different prompt. It is a different model, routed to a separate API endpoint, with a system prompt written to refute rather than produce. That single decision changes what gets caught — and why.
