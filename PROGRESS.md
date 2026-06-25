@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 08: Legacy Code Cleanup
+Sprint 09: Real Photos and Fourth Lab Note
 
 ## Current Focus
 
-Sprint 08 is complete. Writing and Projects dead code clusters removed. Build reduced from 36 to 30 pages. Remaining legacy files: `content/nav.ts` (structural, keep) and `content/photos.ts` (Photography is live; needs real images).
+Sprint 09 is complete. Four real photos live in `public/photos/` and `content/photos.ts` updated. Fourth lab note published: "Why AI Demos Don't Survive Production."
 
-Sprint 09 candidate: Photography with real images, a new lab note, or new feature work.
+Sprint 10 candidate: Workbench MDX body content, image optimisation (WebP, blur placeholders), or a new Deadlock Labs idea.
 
 ## Operating Rules
 
@@ -373,10 +373,47 @@ Sprint 09 candidate: Photography with real images, a new lab note, or new featur
 - [x] Documentation explains what was removed and why.
 - [x] PR opened from `feature/legacy-cleanup` into `main`.
 
+## Sprint 9 Tasks — Complete
+
+### 1. Real Photography
+
+- [x] `public/photos/DLF_7196.JPG` — bird in jacaranda blossom (DSLR, 6000×4000)
+- [x] `public/photos/PXL_20251129_053948506.jpg` — turtles on rocks (4080×3072)
+- [x] `public/photos/PXL_20260103_102418113~2.jpg` — full moon through clouds (4080×3072)
+- [x] `public/photos/PXL_20260214_072717489.jpg` — floral tribute outside mural building (4080×3072)
+- [x] `content/photos.ts` updated — real filenames, display dimensions, alt text, titles, categories; placeholder SVG entries removed
+- [x] No code changes to gallery or card components required
+
+### 2. Fourth Lab Note
+
+- [x] `content/notes/demos-vs-production.mdx` — "Why AI Demos Don't Survive Production"
+- [x] Full frontmatter: title, slug, summary, published, updated, tags, draft: false
+- [x] ~550 word body covering: what demos don't test, the integration surface problem, confidence calibration, what actually helps
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-09.md` added.
+- [x] `CHANGELOG.md` Sprint 09 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 31 pages, TypeScript clean.
+- [x] `/lab-notes/demos-vs-production` generates statically.
+- [x] `/photography` serves real images via `next/image`.
+- [x] No direct commits to `main`.
+
+## Definition of Done — Sprint 9
+
+- [x] Photography section has real images, no placeholders.
+- [x] Four lab notes published.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/real-photos-and-lab-note` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 09 (TBD):
+Sprint 10 (TBD):
 
-- Photography with real images when available.
-- A new lab note.
-- New feature work on Deadlock Labs or Lab Notes.
+- Workbench MDX body content — prose narrative in the body field of each entry.
+- Image optimisation — convert photos to WebP, add blur placeholders.
+- A new Deadlock Labs idea.

@@ -11,63 +11,43 @@ export interface Photo {
 
 export const photos: Photo[] = [
   {
-    id: "1",
-    src: "/photos/street-1.svg",
-    alt: "Street scene placeholder",
-    title: "Morning Commute",
+    id: "jacaranda-bird",
+    src: "/photos/DLF_7196.JPG",
+    alt: "A bird perched among purple jacaranda blossoms against a blue sky",
+    title: "Among the Jacarandas",
+    category: "Nature",
+    location: "Sydney, Australia",
+    width: 1200,
+    height: 800
+  },
+  {
+    id: "turtles-pond",
+    src: "/photos/PXL_20251129_053948506.jpg",
+    alt: "Two turtles basking on rocks beside a still garden pond",
+    title: "Afternoon Sun",
+    category: "Nature",
+    location: "Sydney, Australia",
+    width: 1200,
+    height: 904
+  },
+  {
+    id: "full-moon",
+    src: "/photos/PXL_20260103_102418113~2.jpg",
+    alt: "A full moon glowing through cloud cover against a dark night sky",
+    title: "Full Moon",
+    category: "Nature",
+    location: "Sydney, Australia",
+    width: 1200,
+    height: 904
+  },
+  {
+    id: "floral-tribute",
+    src: "/photos/PXL_20260214_072717489.jpg",
+    alt: "A floral wreath on a red carpet outside a building decorated with colourful geometric murals",
+    title: "Floral Tribute",
     category: "Street",
     location: "Sydney, Australia",
     width: 1200,
-    height: 900
-  },
-  {
-    id: "2",
-    src: "/photos/travel-1.svg",
-    alt: "Travel landscape placeholder",
-    title: "Coastal Walk",
-    category: "Travel",
-    location: "New South Wales",
-    width: 1200,
-    height: 900
-  },
-  {
-    id: "3",
-    src: "/photos/architecture-1.svg",
-    alt: "Architecture placeholder",
-    title: "Glass and Steel",
-    category: "Architecture",
-    location: "Sydney CBD",
-    width: 1200,
-    height: 900
-  },
-  {
-    id: "4",
-    src: "/photos/nature-1.svg",
-    alt: "Nature placeholder",
-    title: "Bush Track",
-    category: "Nature",
-    location: "Blue Mountains",
-    width: 1200,
-    height: 900
-  },
-  {
-    id: "5",
-    src: "/photos/street-2.svg",
-    alt: "Night street placeholder",
-    title: "After Hours",
-    category: "Street",
-    location: "Darlinghurst",
-    width: 1200,
-    height: 900
-  },
-  {
-    id: "6",
-    src: "/photos/travel-2.svg",
-    alt: "Sunset placeholder",
-    title: "Golden Hour",
-    category: "Travel",
-    location: "Manly Beach",
-    width: 1200,
-    height: 900
+    height: 904
   }
 ];
