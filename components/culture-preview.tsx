@@ -1,11 +1,26 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { cultureSections } from "@/content/culture";
+import { getItem } from "@/lib/content";
+
+interface CultureItem {
+  title: string;
+  subtitle: string;
+  status: string;
+  note?: string;
+}
+
+interface CultureSection {
+  label: string;
+  items: CultureItem[];
+}
 
 export function CulturePreview() {
-  const items = cultureSections.flatMap((section) =>
-    section.items.map((item) => ({ ...item, group: section.label }))
-  ).slice(0, 4);
+  const culture = getItem("culture", "culture");
+  const sections = Array.isArray(culture?.sections) ? (culture.sections as CultureSection[]) : [];
+
+  const items = sections
+    .flatMap((section) => section.items.map((item) => ({ ...item, group: section.label })))
+    .slice(0, 4);
 
   return (
     <section className="border-t py-20">
