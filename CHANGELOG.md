@@ -1,6 +1,22 @@
 # Changelog
 
-## Unreleased — Sprint 09: Real Photos and Fourth Lab Note
+## Unreleased — Sprint 10: Workbench Prose Bodies
+
+### Added
+
+- `docs/sprints/sprint-10.md` — sprint record
+
+### Changed
+
+- `app/workbench/[slug]/page.tsx` — `MDXRemote` wired in; body renders between hero and card grid when present
+- `content/workbench/agentic-data-platform-delivery-engine.mdx` — prose narrative body added (~500 words)
+- `content/workbench/arb.mdx` — prose narrative body added (~400 words)
+- `content/workbench/contextatlas.mdx` — prose narrative body added (~550 words)
+- `content/workbench/portfolio-site.mdx` — prose narrative body added (~400 words)
+
+---
+
+## Sprint 09: Real Photos and Fourth Lab Note
 
 ### Added
 

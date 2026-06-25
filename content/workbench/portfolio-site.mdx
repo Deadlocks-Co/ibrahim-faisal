@@ -28,3 +28,21 @@ problem: A traditional portfolio over-emphasises completed projects. It does not
 approach: The site is being shaped around Deadlock Labs, Workbench, Lab Notes, and timeline-based documentation. Content structure does the narrative work instead of decorative marketing sections.
 learned: Information architecture is positioning. Renaming a section is cosmetic; changing the model changes what the site can become.
 ---
+
+Most portfolio sites optimise for the wrong thing. They are designed to impress on first contact — a grid of polished case studies, a list of recognisable clients, a stack of logos. That format works if the audience already knows what to look for. It does not work well for communicating how someone actually works, what they find interesting, or whether their thinking is worth engaging with.
+
+This site started with the same default. The early version had a Projects section with four completed entries and not much else. It presented a static view of things that were already done. That is not how useful work happens, and it is not what a site like this should be for.
+
+## The architecture decisions that changed it
+
+The first significant decision was to replace Projects with Workbench — a naming and framing change that shifted the purpose of the section from "completed work" to "ongoing and past projects in their honest state." That shift drove the content requirements. A Workbench entry needs to say what was built, why, what was learned, and what status it is in. A portfolio entry just needs to look finished.
+
+The second decision was to treat Lab Notes as first-class content. Notes are where thinking happens before it is ready to be a project. Surfacing them prominently signals that the site is a working environment, not a brochure.
+
+The third decision was the content architecture itself. Rather than reaching for a CMS or a content framework, the site uses a lightweight file-based loader — one MDX file per content item, frontmatter for structured data, the file body for prose. That decision has held up well across ten sprints of iteration. It is easy to understand, easy to change, and produces no surprising behaviour.
+
+## What it is becoming
+
+The site is being built in public as a working artefact of Deadlock Labs. Each section reflects a different mode of output: Workbench for tools and systems, Lab Notes for ideas and observations, Deadlock Labs for the research pipeline, Photography for what sits outside professional context. The structure is the argument. If the content model is right, what the site is *for* should be self-evident without a page explaining it.
+
+The sprint-based build process has been a useful discipline. Small, focused changes, documented before they are merged, create a trail of decisions that doubles as the operational history of the site. That trail is itself a kind of demonstration.

@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 09: Real Photos and Fourth Lab Note
+Sprint 10: Workbench Prose Bodies
 
 ## Current Focus
 
-Sprint 09 is complete. Four real photos live in `public/photos/` and `content/photos.ts` updated. Fourth lab note published: "Why AI Demos Don't Survive Production."
+Sprint 10 is complete. MDX body rendering wired into the workbench detail page. Prose narrative bodies written for all four workbench entries.
 
-Sprint 10 candidate: Workbench MDX body content, image optimisation (WebP, blur placeholders), or a new Deadlock Labs idea.
+Sprint 11 candidate: A new Deadlock Labs idea, a fifth lab note, image optimisation, or workbench content updates.
 
 ## Operating Rules
 
@@ -410,10 +410,46 @@ Sprint 10 candidate: Workbench MDX body content, image optimisation (WebP, blur 
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/real-photos-and-lab-note` into `main`.
 
+## Sprint 10 Tasks — Complete
+
+### 1. Code Change
+
+- [x] `app/workbench/[slug]/page.tsx` — `MDXRemote` imported and wired in
+- [x] Body section renders between hero and card grid when `item.body` is non-empty
+- [x] `lib/content.ts` unchanged — `body` was already returned by the loader
+
+### 2. Prose Bodies
+
+- [x] `content/workbench/agentic-data-platform-delivery-engine.mdx` — narrative body added: platform onboarding reproducibility, agent role separation, hook-based quality gates, system limits
+- [x] `content/workbench/arb.mdx` — narrative body added: delivery friction accumulation, what the toolkit packages, what it deliberately excludes
+- [x] `content/workbench/contextatlas.mdx` — narrative body added: visible vs invisible engineering output, agentic context requirements, decision record structure
+- [x] `content/workbench/portfolio-site.mdx` — narrative body added: why traditional portfolios fail, the three architecture decisions that changed direction
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-10.md` added.
+- [x] `CHANGELOG.md` Sprint 10 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 31 pages, TypeScript clean.
+- [x] All four workbench slugs generate with body content.
+- [x] No direct commits to `main`.
+- [x] `lib/content.ts` unchanged.
+
+## Definition of Done — Sprint 10
+
+- [x] Workbench detail page renders MDX body prose when present.
+- [x] All four workbench entries have real narrative bodies.
+- [x] Card grid (purpose/problem/approach/learned) remains intact.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/workbench-prose-bodies` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 10 (TBD):
+Sprint 11 (TBD):
 
-- Workbench MDX body content — prose narrative in the body field of each entry.
-- Image optimisation — convert photos to WebP, add blur placeholders.
 - A new Deadlock Labs idea.
+- Fifth lab note.
+- Image optimisation — WebP conversion, blur placeholders.

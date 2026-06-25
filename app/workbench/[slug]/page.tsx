@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCollection, getItem } from "@/lib/content";
 
 export function generateStaticParams() {
@@ -47,6 +48,12 @@ export default async function WorkbenchItemPage({ params }: { params: Promise<{ 
           <h1 className="mt-6 text-4xl font-light tracking-tight md:text-5xl">{String(item.title)}</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{String(item.summary)}</p>
         </section>
+
+        {item.body && (
+          <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none mt-10">
+            <MDXRemote source={String(item.body)} />
+          </article>
+        )}
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_280px]">
           <div className="space-y-6">

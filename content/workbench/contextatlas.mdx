@@ -27,3 +27,24 @@ problem: Engineering work creates scattered traces across chats, repositories, t
 approach: ContextAtlas organises project knowledge around decisions, artefacts, and workflows rather than folders alone. The goal is to make technical memory searchable, portable, and easier to reuse between sessions.
 learned: Context is infrastructure. Once a project crosses a small threshold of collaborators, agents, or repositories, memory needs its own architecture.
 ---
+
+Engineering work produces two kinds of output. The first kind is visible — code, schemas, configuration, tests, documentation. The second kind is invisible — the decisions behind the visible output, the constraints that shaped them, the reasoning that would let someone understand why the code looks the way it does and what it would take to change it safely.
+
+The second kind is usually lost.
+
+It is not lost because engineers are careless. It is lost because the systems we use to organise work are optimised for tracking tasks, not preserving reasoning. A ticket says what was done. A commit message says what changed. Neither reliably says why the decision was made this way rather than another way, what was rejected, or what assumptions would need to hold for the approach to remain appropriate.
+
+This matters more than it used to. When a team is small enough that everyone shares context informally, the loss is recoverable — the people who made the decision are still available to explain it. When a project grows, when engineers rotate, when AI agents start executing work on behalf of the team, the invisible output becomes load-bearing in ways it was not before. Agents given underspecified context will fill the gap, and the gap-filling is often wrong in ways that are not immediately obvious.
+
+## What ContextAtlas addresses
+
+The system organises project knowledge around decisions and artefacts rather than folders and files. A decision record is not a post-mortem. It is a living record of the intent behind a structural choice: what was decided, what alternatives were considered, what constraints ruled them out, and what would constitute a good reason to revisit the decision.
+
+Artefact metadata links deliverables to the decisions that produced them. A dbt model links to the data architecture decision that scoped it. A Terraform module links to the infrastructure constraint that shaped its structure. This creates a lightweight graph of intent that survives the individuals who were involved in the original conversation.
+
+The workflow helpers are designed to make capture low friction. A decision record that takes twenty minutes to write will not get written. The templates are short by design, and the tooling surfaces relevant prior decisions when related work is created, so the connection happens at the moment it is useful rather than as a retrospective exercise.
+
+## Where it is now
+
+ContextAtlas is early. The core data model is in place and the tooling works for projects of a specific size and structure. Scaling it to larger projects with more artefact types, or to workflows that use agents heavily, is the active design question. The hypothesis is that context management becomes more important — not less — as the intelligence executing the work becomes more capable. An agent that can act on context it should not have is more dangerous than one that cannot act at all.
+
