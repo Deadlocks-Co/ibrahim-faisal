@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased — Sprint 05: Content Refresh and Now Page Migration
+## Unreleased — Sprint 06: About Page Redesign
+
+### Added
+
+- `content/about/about.mdx` — real bio content as a singleton MDX file with frontmatter (role, location, tagline, focus, links)
+- `docs/sprints/sprint-06.md` — sprint record
+
+### Changed
+
+- `app/about/page.tsx` — redesigned with two-column layout; MDX body rendered via `next-mdx-remote/rsc`; sidebar with focus areas and external links; replaces the two-paragraph placeholder
+
+---
+
+## Sprint 05: Content Refresh and Now Page Migration
 
 ### Added
 

@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 05: Content Refresh and Now Page Migration
+Sprint 06: About Page Redesign
 
 ## Current Focus
 
-Sprint 05 is complete. Two new real lab notes published. The Now page now reads from `content/now/now.mdx` — it can be updated without touching code. `content/now.ts` is removed.
+Sprint 06 is complete. The About page is now MDX-backed, properly designed with a two-column layout, and renders a real prose bio with a sticky sidebar.
 
-Sprint 06 candidate: About page prose, Photography with real images, or a third content domain.
+Sprint 07 candidate: Contact page, culture page migration, or a new content section.
 
 ## Operating Rules
 
@@ -258,11 +258,50 @@ Sprint 06 candidate: About page prose, Photography with real images, or a third 
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/content-refresh` into `main`.
 
+## Sprint 6 Tasks — Complete
+
+### 1. About MDX Content
+
+- [x] `content/about/about.mdx` created with full frontmatter: title, role, location, tagline, focus, links
+- [x] Prose body ~350 words in Ibrahim's practitioner voice — professional background, AI systems work, Deadlock Labs, outside interests
+- [x] No placeholder content
+
+### 2. About Page Redesign
+
+- [x] `app/about/page.tsx` redesigned as async Server Component
+- [x] Header: role + location eyebrow, h1 name, tagline
+- [x] Two-column layout `lg:grid-cols-[1fr_240px]`: MDX prose body (left) + sticky sidebar (right)
+- [x] MDX body rendered via `next-mdx-remote/rsc` with `prose prose-sm prose-neutral dark:prose-invert` classes
+- [x] Sidebar: focus areas list, external links with `ExternalLink` icon
+- [x] Inline hardcoded text removed
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-06.md` added.
+- [x] `CHANGELOG.md` Sprint 06 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 36 pages, TypeScript clean.
+- [x] `/about` renders MDX content correctly.
+- [x] No direct commits to `main`.
+- [x] No placeholder content shipped.
+- [x] `lib/content.ts` unchanged.
+
+## Definition of Done — Sprint 6
+
+- [x] `/about` reads from `content/about/about.mdx`.
+- [x] Bio is real, specific, and in Ibrahim's voice.
+- [x] Layout is consistent with the rest of the site.
+- [x] Bio is updatable without touching code.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/about-page` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 06 (TBD):
+Sprint 07 (TBD):
 
-- About page — prose content and structure.
-- Photography — real images when available.
-- Culture page MDX migration if content starts changing frequently.
-- A third content domain.
+- Contact page redesign using the singleton MDX pattern.
+- Culture page migration from TypeScript to MDX.
+- A new content section if one becomes relevant.
