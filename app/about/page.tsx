@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { ExternalLink } from "lucide-react";
 import { getItem } from "@/lib/content";
+
+const mdxOptions = { remarkPlugins: [remarkGfm] };
 
 export const metadata: Metadata = {
   title: "About — Ibrahim Faisal",
@@ -39,7 +42,7 @@ export default async function AboutPage() {
 
       <div className="grid gap-12 lg:grid-cols-[1fr_240px]">
         <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
-          <MDXRemote source={String(body)} />
+          <MDXRemote source={String(body)} options={{ mdxOptions }} />
         </article>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
