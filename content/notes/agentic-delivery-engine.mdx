@@ -17,7 +17,7 @@ The gap between "an LLM can write a dbt model" and "an LLM can reliably ship a p
 
 ## The Problem
 
-Every data consultancy runs the same playbook. You win a client, sign a statement of work, spend the first two weeks writing a data contract, then spend the next eight writing Snowflake DDL, dbt models, Terraform, CI/CD pipelines, and documentation. Most of that work is skilled but heavily patterned. You've done it before. You'll do it again.
+Every data consultancy runs the same playbook. Win a client, sign a statement of work, spend the first two weeks writing a data contract, then spend the next eight writing Snowflake DDL, dbt models, Terraform, CI/CD pipelines, and documentation. Most of that work is skilled, but it's heavily patterned. You've done it before. You'll do it again.
 
 We kept asking: what if the scaffolding could write itself?
 
@@ -35,16 +35,16 @@ The UI is intentionally minimal: a command panel, a sidebar showing which agent 
 
 ## Why We Didn't Just Use Claude Code
 
-Claude Code is excellent at interactive problem-solving. It explores the codebase, it makes changes, you review and redirect. That loop works beautifully for open-ended engineering tasks.
+Claude Code is excellent at interactive problem-solving. It explores the codebase, makes changes, you review and redirect. That loop works beautifully for open-ended engineering tasks.
 
-But data consulting delivery is not open-ended:
+Data consulting delivery is not open-ended:
 
 - Every artefact must conform to a data contract.
 - Every table must follow naming conventions, have audit columns, be idempotent.
 - Every piece of code should be reviewed before someone signs off on it.
 - Every task should be logged, tracked, and handed over — not merged by the agent itself.
 
-Claude Code hands control to you between each step. We wanted something that could run the full cycle — generate, review, fix, hand over — without pausing to ask. Run.
+Claude Code hands control to you between each step. We wanted something that could run the full cycle — generate, review, fix, hand over — without pausing to ask.
 
 The other reason: we wanted a team. The agent writing Snowflake DDL should not be the same agent reviewing it. A Platform Engineer who provisions Terraform should not be the same agent writing dbt models. Mixing responsibilities makes quality indistinguishable from a single distracted generalist.
 
@@ -54,7 +54,7 @@ The backend is a single Next.js API route — about 540 lines. No database, no q
 
 ### The Main Agent: Claude Sonnet 4.6 via SSE
 
-The main agent is Claude Sonnet 4.6, called via the Anthropic SDK with `client.messages.stream`. The response is piped into a `ReadableStream` that sends events to the browser. The browser renders tokens as they arrive.
+The main agent is Claude Sonnet 4.6, called via the Anthropic SDK with `client.messages.stream`. The response is piped into a `ReadableStream` that sends events to the browser, which renders tokens as they arrive.
 
 The `SYSTEM` prompt defines the team:
 
@@ -75,7 +75,7 @@ These markers are parsed client-side to show which agent is active, which skill 
 
 ### The Peer Reviewer: Gemini 2.5 Flash
 
-The peer reviewer runs on a separate model — Gemini 2.5 Flash via an OpenAI-compatible LLM gateway. This is a deliberate architecture decision. A reviewer that is adversarial by design should not share the generator's assumptions, quirks, or blind spots. Routing it to a different model with a different system prompt helps.
+The peer reviewer runs on a separate model — Gemini 2.5 Flash via an OpenAI-compatible LLM gateway. This is a deliberate architecture decision. A reviewer designed to be adversarial should not share the generator's assumptions, quirks, or blind spots. Routing it to a different model with a different system prompt helps.
 
 The reviewer's output follows a structured format:
 
@@ -90,7 +90,7 @@ The reviewer's output follows a structured format:
 
 This is the most interesting piece of engineering in the project.
 
-The main agent streams text token by token. We want to fire a peer review the moment a code block closes — not after the full response finishes. A full response can be long and take 30 seconds. So we built `BlockDetector`: a line-buffered stream processor that watches for triple-backtick boundaries and fires a callback the instant a block closes.
+The main agent streams text token by token. We want to fire a peer review the moment a code block closes — not after the full response finishes. A full response can take 30 seconds. So we built `BlockDetector`: a line-buffered stream processor that watches for triple-backtick boundaries and fires a callback the instant a block closes.
 
 ```ts
 class BlockDetector {
@@ -114,21 +114,21 @@ class BlockDetector {
 }
 ```
 
-Each block fires an async IIFE that pushes into a `Promise<ReviewResult>[]` array. The main stream continues. The reviews run concurrently. After the main stream finishes, we `await Promise.all(pendingReviews)` to collect results and write them to `PROGRESS.md`.
+Each block fires an async IIFE that pushes into a `Promise<ReviewResult>[]` array. The main stream continues; the reviews run concurrently. After the main stream finishes, we `await Promise.all(pendingReviews)` to collect results and write them to `PROGRESS.md`.
 
-This means if the main agent generates five code blocks, the first four reviews are running in parallel while the main agent is still writing the fifth one. On a typical develop run, this saves 30–60 seconds.
+If the main agent generates five code blocks, the first four reviews are running in parallel while the main agent writes the fifth. On a typical develop run, this saves 30–60 seconds.
 
 ## The Fix Loop
 
 The naive approach: review once, emit findings, done.
 
-The problem: a single round of review often finds issues, but fixing those issues sometimes introduces new ones. Or fixes some and misses others. You need iteration.
+The problem: fixing issues sometimes introduces new ones. Or fixes some and misses others. You need iteration.
 
-We replaced a fixed 2-round loop with an unbounded `while` loop capped at `MAX_ROUNDS = 5`. The loop exits when:
+We replaced a fixed 2-round loop with an unbounded `while` capped at `MAX_ROUNDS = 5`. The loop exits when:
 
 1. **PASS or PASS WITH NOTES**: the reviewer is satisfied — proceed.
-2. **Stale fingerprint**: the findings from round N are identical to round N-1. The fix didn't change anything meaningful. This is a human problem. We escalate.
-3. **MAX_ROUNDS reached**: five rounds on the same artefact is a signal the issue is ambiguous or requires context the agent doesn't have.
+2. **Stale fingerprint**: the findings from round N are identical to round N-1. The fix didn't change anything meaningful. This is a human problem. Escalate.
+3. **MAX_ROUNDS reached**: five rounds on the same artefact signals the issue is ambiguous or requires context the agent doesn't have.
 
 Stale detection works by normalising findings and comparing a hash:
 
@@ -143,17 +143,17 @@ function fingerprintFindings(reviewText: string): string {
 }
 ```
 
-If the fingerprint matches the previous round's fingerprint: escalate to human, don't retry.
+If the fingerprint matches the previous round: escalate to human, don't retry.
 
 ## Memory and Idempotency
 
-Two problems that took longer to get right.
+Two problems that took longer to get right than anything else.
 
 ### PROGRESS.md: Idempotency Across Runs
 
 The first time you run `/develop aurora`, the agent creates the task list. What happens when you run it again? Without idempotency, it restarts from scratch — duplicating work, raising duplicate PRs, wasting tokens.
 
-`PROGRESS.md` is the solution. After each cycle, the agent emits a fenced `progress-md` block with a table of every task, its status, the responsible agent, and any notes. The runner writes it to `engagements/{name}/artifacts/`. On the next run, the runner loads it server-side and injects it into the agent's context. The agent reads it, sees which tasks are marked `HANDOVER`, and skips them.
+`PROGRESS.md` is the solution. After each cycle, the agent emits a fenced `progress-md` block with a table of every task: status, agent, notes. The runner writes it to `engagements/{name}/artifacts/`. On the next run, the runner loads it server-side and injects it into the agent's context. The agent reads it, sees which tasks are marked `HANDOVER`, and skips them.
 
 | Task | Description | Agent | Status | Date | Notes |
 |------|-------------|-------|--------|------|-------|
@@ -162,9 +162,9 @@ The first time you run `/develop aurora`, the agent creates the task list. What 
 
 ### promoted-patterns.md: Cross-Session Learning
 
-Every peer review generates findings. Most findings are one-off. But some findings repeat — across artefacts, across runs, across engagements — nullable foreign keys, non-idempotent DML, hardcoded schema names.
+Every peer review generates findings. Most are one-off. But some repeat — across artefacts, across runs, across engagements — nullable foreign keys, non-idempotent DML, hardcoded schema names.
 
-We capture finding categories per artefact. If a category appears in 2 or more artefacts in a run, it surfaces in `PROGRESS.md` as a recurring pattern. If patterns appear in three or more sessions, they get promoted to `memory/patterns/promoted-patterns.md`.
+We capture finding categories per artefact. If a category appears in two or more artefacts in a run, it surfaces in `PROGRESS.md` as a recurring pattern. If patterns appear across three or more sessions, they get promoted to `memory/patterns/promoted-patterns.md`.
 
 That file is loaded into every run's context as a checklist. The agent reads it before generating anything. It's the closest thing to institutional memory we have right now.
 
@@ -172,9 +172,9 @@ That file is loaded into every run's context as a checklist. The agent reads it 
 
 This one is less architecture and more craft.
 
-The early agent output read like a formal audit report: "I have reviewed the artefacts and identified the following issues. Upon analysis..." Nobody wants to read that. It doesn't feel like a team; it feels like a system.
+Early agent output read like a formal audit report: "I have reviewed the artefacts and identified the following issues. Upon analysis..." Nobody wants to read that. It doesn't feel like a team; it feels like a system.
 
-We added a Voice section to the `SYSTEM` prompt that takes effect for prose comments, not structured markers:
+We added a Voice section to the `SYSTEM` prompt for prose comments, separate from structured markers:
 
 > Write like an engineer typing in Slack. Short sentences, no fluff. Never: "I will now", "As requested". Use: "done", "watch the nulls here", "LGTM."
 
@@ -185,7 +185,7 @@ Each agent has a personality:
 - **Platform Engineer**: infrastructure owner. "Costs stay flat."
 - **Peer Reviewer**: encouraging but thorough. "Solid overall, but caught one thing:"
 
-The peer reviewer prompt was rewritten tone-first. The formal "You are an independent code reviewer" opening was setting the wrong register. Replacing it with "You are a senior data engineer reviewing a teammate's PR. You're direct, you find real problems, and you respect the person" made an immediate difference.
+The peer reviewer prompt was rewritten tone-first. "You are an independent code reviewer" was setting the wrong register. "You are a senior data engineer reviewing a teammate's PR. You're direct, you find real problems, and you respect the person" made an immediate difference.
 
 ### slack_channel.md: The Audit Log
 
@@ -214,7 +214,7 @@ Fixed both. Pushing.
 LGTM. contacts_raw.sql — all good.
 ```
 
-It's append-only. Second run appends a new `## Run:` block. You end up with a chronological record of every decision, finding, and handoff that you can audit without reading raw LLM output.
+It's append-only. Second run appends a new `## Run:` block. You end up with a chronological record of every decision, finding, and handoff — auditable without reading raw LLM output.
 
 ## What It Can Do Today
 
@@ -237,9 +237,9 @@ It's append-only. Second run appends a new `## Run:` block. You end up with a ch
 
 ### 1. Actual Git Integration
 
-Right now the agent talks about raising a PR. It describes the branch it would create, the files it would commit. The runner does not actually do it — it emits the instructions.
+Right now the agent talks about raising a PR. It describes the branch it would create, the files it would commit. The runner does not actually do it.
 
-Wiring in real git operations (branch creation, commits, Bitbucket/GitHub API) would close the loop from "agent proposes" to "PR exists for human review." This is the single highest-value missing piece.
+Wiring in real git operations — branch creation, commits, Bitbucket/GitHub API — would close the loop from "agent proposes" to "PR exists for human review." This is the highest-value missing piece.
 
 ### 2. Jira / Linear Integration
 
@@ -247,7 +247,7 @@ The develop command instructs the agent to log an issue after every step. It doe
 
 ### 3. Real Validator Integration
 
-The peer review is model-based. Models are not code-aware — `sqlfluff` catches style, `dbt parse` catches broken refs, `terraform validate` catches bad HCL. Adding a validation step between generation and peer review — run the validator, pass the output as context to the reviewer — would reduce false PASS verdicts.
+Peer review is model-based. Models are not code-aware — `sqlfluff` catches style, `dbt parse` catches broken refs, `terraform validate` catches bad HCL. Adding a validation step between generation and peer review — run the validator, pass the output as context to the reviewer — would reduce false PASS verdicts.
 
 ### 4. Cost Tracking
 
@@ -255,23 +255,23 @@ Every run consumes tokens across two models. Right now there's no visibility int
 
 ### 5. Multi-Engagement Parallelism
 
-The runner handles one engagement at a time. If you're running three client engagements, you run three browser tabs. A proper job queue with per-engagement run history would make this a proper tool rather than a dev prototype.
+The runner handles one engagement at a time. If you're running three client engagements, you run three browser tabs. A proper job queue with per-engagement run history would make this a real tool rather than a dev prototype.
 
 ### 6. Human-in-the-Loop Approval Gate
 
-Currently the agent hands over and stops. But "stop" is just a convention in `PROGRESS.md` — there's no real pause mechanism. Adding an approval prompt — "The agent has raised a PR on aurora. Review and approve to continue." — would make the handover explicit and trackable.
+Currently the agent hands over and stops — but "stop" is just a convention in `PROGRESS.md`. There's no real pause mechanism. Adding an approval prompt — "The agent has raised a PR on aurora. Review and approve to continue." — would make the handover explicit and trackable.
 
 ### 7. Promoted-Pattern Automation
 
-Right now promoting a pattern from `PROGRESS.md` to `promoted-patterns.md` is manual. An agent that reads the episodic memory across recent runs, identifies patterns that have appeared three or more times, and proposes a promotion — with a human approval step — would close the learning loop without human curation.
+Right now promoting a pattern from `PROGRESS.md` to `promoted-patterns.md` is manual. An agent that reads episodic memory across recent runs, identifies patterns appearing three or more times, and proposes a promotion — with a human approval step — would close the learning loop without human curation.
 
 ## The Honest Reflection
 
-We built ADP Runner in a few weeks of evenings and weekends. It works well enough to run real delivery cycles on a real client engagement. The peer review catches genuine issues. The idempotency mechanism genuinely prevents duplicate work. The Slack-channel voice makes the output readable instead of painful.
+We built ADP Runner in a few weeks of evenings and weekends. It runs real delivery cycles on a real client engagement. The peer review catches genuine issues. The idempotency mechanism genuinely prevents duplicate work. The Slack-channel voice makes the output readable.
 
-What it is not is production software. The error handling is minimal. There's no auth. The UI has one hardcoded default engagement. The "memory" system is flat markdown files read at startup. The git and Jira integrations are theatrical.
+It is not production software. Error handling is minimal. There's no auth. The UI has one hardcoded default engagement. The "memory" system is flat markdown files read at startup. The git and Jira integrations are theatrical.
 
-But that's fine. The point of a prototype is to answer whether the architecture is worth building. The answer here is yes — the loop works, the quality is usable, and the friction is low enough that a consultant would actually run it rather than fight it themselves.
+That's fine. The point of a prototype is to answer whether the architecture is worth building. The answer is yes — the loop works, the quality is usable, and the friction is low enough that a consultant would actually run it rather than fight it themselves.
 
 The next step is productionising the loop. Starting with real git operations. Everything else follows from that.
 
