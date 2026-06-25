@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
         source: "/projects/:slug",
         destination: "/workbench/:slug",
         permanent: true
+      },
+      {
+        source: "/writing",
+        destination: "/lab-notes",
+        permanent: true
       }
     ];
   }

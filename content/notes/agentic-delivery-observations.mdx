@@ -1,0 +1,53 @@
+---
+title: What actually breaks in agentic delivery systems
+slug: agentic-delivery-observations
+summary: Eighteen months of running agents on real delivery work. The failures are not where the demos suggest they will be.
+published: "2026-05-01"
+updated: "2026-06-20"
+tags:
+  - agentic-systems
+  - delivery
+  - AI
+  - engineering
+draft: false
+---
+
+I have spent the better part of eighteen months building and running agentic systems against real data platform delivery work. Not demos. Not proofs of concept with synthetic tasks. Actual client engagements where the output gets reviewed by engineers, deployed to AWS, and questioned in architecture boards.
+
+The failures are not where the ecosystem conversation suggests they will be.
+
+## The model is rarely the problem
+
+When an agentic workflow breaks, the first instinct is to assume the model made a bad decision. Usually it did not. The model did exactly what the prompt asked — the prompt just did not account for the situation it encountered.
+
+The gap is almost always between what the task description assumed and what the environment actually looked like. A migration agent told to "apply the standard schema pattern" fails when the schema has a non-standard audit column no one documented. The model is not confused. It is working with incomplete context and has no way to know what it does not know.
+
+The fix is not a better model. It is better context loading — specifically, structured context that describes the environment before the task starts, not alongside it.
+
+## Guardrails behave differently in practice
+
+Deterministic guardrails are the right architectural call. A hook that blocks a direct push to a protected branch, or that runs a compile check after every SQL write, is far more reliable than asking the model to self-police. I still believe this.
+
+The thing that surprised me is how often the guardrail triggers correctly but the recovery loop fails. The model sees the failure signal, understands it, generates a fix, and then fails to apply the fix in the right scope. It fixes the symptom in the file it is currently editing but misses the same pattern two files away.
+
+The lesson: guardrails need to be paired with scoped recovery prompts. "You failed. Fix it." is too open. "You failed at line 42 of this file because of this specific constraint. Here is the exact check that must pass." works considerably better.
+
+## The control plane problem
+
+The pattern I keep returning to is this: the model should not be the control plane for quality. It can be the production engine — generating code, summarising findings, drafting documentation — but the sequence, the gates, and the rollback decisions should live outside the model's judgement.
+
+This means more engineering overhead upfront. You are building a workflow, not just writing prompts. The workflow defines what agents run in what order, what must pass before the next step starts, and what happens when something fails. The model fits inside that structure. It does not define the structure.
+
+Teams that skip this step get impressive-looking demos that collapse under real delivery conditions. The model generates fluently, but without structural governance the outputs pile up without a forcing function to validate them.
+
+## What I would do differently
+
+Starting a new agentic project now, I would do three things earlier:
+
+First, invest in context architecture before building any agent. What does the agent need to know about the environment, the standards, and the history of decisions? Where does that knowledge live? How does it get loaded reliably?
+
+Second, design the failure path before the happy path. What does a failed gate look like? What information does the recovery agent receive? Is that information precise enough to act on?
+
+Third, treat each agent boundary as a contract. The output of one agent is the input of the next. If that contract is implicit — just a text blob passed between steps — the system will be brittle at exactly the moments that matter.
+
+None of this is glamorous. It is infrastructure work. But agentic delivery systems that actually ship are infrastructure, not magic.
