@@ -1,0 +1,53 @@
+---
+title: The Evaluation Problem in Agentic Systems
+slug: the-evaluation-problem
+summary: You cannot eyeball ten thousand agent runs. Most teams discover this too late, after they have already shipped something they cannot measure.
+published: "2026-04-10"
+updated: "2026-06-20"
+tags:
+  - agentic-systems
+  - evaluation
+  - AI
+  - engineering
+draft: false
+---
+
+The first question teams ask about an agentic system is whether it works. The second question — almost always asked too late — is how they would know if it stopped working.
+
+These are different questions. The gap between them is where most agentic systems quietly fail.
+
+## The eyeball problem
+
+In early development, evaluation is informal. Someone runs the agent, reads the output, and decides it looks right. This is fine when you are building something with ten cases and one engineer paying attention. It stops working the moment you have ten thousand cases, background jobs running without anyone watching, or a model that has been quietly drifting for two weeks.
+
+The problem is not that engineers are careless. It is that agentic outputs are not binary. A SQL query either runs or it does not. An agent that summarises a document, routes a ticket, or generates a structured recommendation can be partially right in ways that are hard to catch without a framework designed to catch them.
+
+You need something more principled than "it looks fine to me."
+
+## What evaluation actually requires
+
+Good evaluation in an agentic system has three layers, and most teams only build one.
+
+The first is **functional correctness**: does the output have the right shape? Does the structured JSON parse? Are the required fields present? This is the easy layer. It catches hard failures but misses the slow drift.
+
+The second is **semantic correctness**: does the output mean the right thing? Does the summary capture the most important content, or does it hallucinate a fact that was not in the source? This layer requires a reference — a human-labelled dataset, a deterministic check, or a second model acting as a judge. It is expensive to build and uncomfortable to maintain, which is why teams skip it.
+
+The third is **business correctness**: does the output produce the right downstream effect? A perfectly-formed recommendation that consistently goes unacted on is not working, regardless of what the semantic check says. This layer connects your AI system to observable real-world outcomes, and it is the only layer that tells you whether the system is earning its place.
+
+Most production agentic systems I have seen have layer one. A few have layer two. Almost none have layer three wired back into how they iterate on the system.
+
+## The judge model trap
+
+A common shortcut is to use a second LLM to evaluate the first. Feed the output to GPT or Claude with a rubric and ask it to score the result. This works better than nothing and is genuinely useful during development. But it has limits that are easy to underestimate.
+
+Judge models inherit the same failure modes as the models they are judging. They are not a source of ground truth. They are an approximation of human preference that degrades when the inputs are ambiguous, when the rubric is underspecified, or when the original model and the judge model share training data in ways that produce mutual blind spots.
+
+Use judge models to accelerate early iteration, not to certify production quality.
+
+## What I would do differently
+
+Start with the evaluation framework before you start with the agent. Define what correct looks like, in writing, before you write a prompt. Instrument every agent run — inputs, outputs, latency, model version, tool calls made — from day one. Build a regression dataset from the first ten edge cases you find, not the last.
+
+The teams that do this are not doing it because they are more rigorous. They are doing it because they got burned once and decided it was cheaper to build the scaffolding than to keep cleaning up quietly broken outputs.
+
+Agentic systems are not magic. They are software. Treat them like software.

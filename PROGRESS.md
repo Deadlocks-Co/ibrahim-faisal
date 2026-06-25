@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 04: Deadlock Labs Content Migration
+Sprint 05: Content Refresh and Now Page Migration
 
 ## Current Focus
 
-Sprint 04 is complete. All Deadlock Labs ideas are now backed by `content/labs/*.mdx`. The listing and detail pages read from the content loader instead of hardcoded TypeScript objects. The `conversational-host-engine` 404 gap is closed.
+Sprint 05 is complete. Two new real lab notes published. The Now page now reads from `content/now/now.mdx` — it can be updated without touching code. `content/now.ts` is removed.
 
-Sprint 05 candidate: Additional lab notes, Photography section improvements, or site-wide search/filtering.
+Sprint 06 candidate: About page prose, Photography with real images, or a third content domain.
 
 ## Operating Rules
 
@@ -219,10 +219,50 @@ Sprint 05 candidate: Additional lab notes, Photography section improvements, or 
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/labs-content-migration` into `main`.
 
+## Sprint 5 Tasks — Complete
+
+### 1. New Lab Notes
+
+- [x] `content/notes/the-evaluation-problem.mdx` — evaluation layers in agentic systems (~500 words)
+- [x] `content/notes/building-in-public.mdx` — Deadlock Labs rationale in prose form (~500 words)
+- [x] Full frontmatter on both: title, slug, summary, published, updated, tags, draft: false
+- [x] Substantive bodies — no placeholder content
+
+### 2. Now Page MDX Migration
+
+- [x] `content/now/now.mdx` created with YAML-structured sections and items in frontmatter
+- [x] `app/now/page.tsx` updated to read from `getItem("now", "now")`
+- [x] Sections typed locally with `Array.isArray` guard before type-assertion
+- [x] `content/now.ts` removed
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-05.md` added.
+- [x] `CHANGELOG.md` Sprint 05 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 36 pages, TypeScript clean.
+- [x] `/lab-notes/the-evaluation-problem` and `/lab-notes/building-in-public` generate statically.
+- [x] `/now` renders from MDX content.
+- [x] No direct commits to `main`.
+- [x] No placeholder content shipped.
+- [x] `lib/content.ts` unchanged.
+
+## Definition of Done — Sprint 5
+
+- [x] Two real lab notes published and accessible at `/lab-notes/[slug]`.
+- [x] Now page reads from `content/now/now.mdx` — no code change needed to update it.
+- [x] `content/now.ts` retired.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/content-refresh` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 05 (TBD):
+Sprint 06 (TBD):
 
-- Additional lab notes.
-- Photography section improvements.
-- Lab Notes or Deadlock Labs search/filtering if content volume warrants it.
+- About page — prose content and structure.
+- Photography — real images when available.
+- Culture page MDX migration if content starts changing frequently.
+- A third content domain.

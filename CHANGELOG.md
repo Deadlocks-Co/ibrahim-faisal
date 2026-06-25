@@ -1,6 +1,25 @@
 # Changelog
 
-## Unreleased — Sprint 04: Deadlock Labs Content Migration
+## Unreleased — Sprint 05: Content Refresh and Now Page Migration
+
+### Added
+
+- `content/notes/the-evaluation-problem.mdx` — lab note on evaluation layers in agentic systems
+- `content/notes/building-in-public.mdx` — lab note on the Deadlock Labs rationale
+- `content/now/now.mdx` — Now page content as a single MDX file with frontmatter-structured sections
+- `docs/sprints/sprint-05.md` — sprint record
+
+### Changed
+
+- `app/now/page.tsx` — reads from `getItem("now", "now")` instead of `content/now.ts`
+
+### Removed
+
+- `content/now.ts` — retired; replaced by `content/now/now.mdx`
+
+---
+
+## Sprint 04: Deadlock Labs Content Migration
 
 ### Added
 
