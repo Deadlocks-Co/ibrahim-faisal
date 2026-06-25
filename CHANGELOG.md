@@ -1,6 +1,28 @@
 # Changelog
 
-## Unreleased — Sprint 03: Lab Notes Foundation
+## Unreleased — Sprint 04: Deadlock Labs Content Migration
+
+### Added
+
+- `content/labs/sidekick.mdx`
+- `content/labs/pally.mdx`
+- `content/labs/bangla-translator.mdx`
+- `content/labs/conversational-host-engine.mdx` (new — idea existed in listing but had no detail page)
+- `content/labs/world-cup-quiz-battle.mdx`
+- `docs/sprints/sprint-04.md` — sprint record
+
+### Changed
+
+- `app/deadlock-labs/[slug]/page.tsx` — reads from `getItem("labs", slug)`; `generateStaticParams` added
+- `app/deadlock-labs/page.tsx` — reads from `getCollection("labs")`; icon strings mapped to Lucide components
+
+### Removed
+
+- `content/labs/.gitkeep` — replaced by real content
+
+---
+
+## Sprint 03: Lab Notes Foundation
 
 ### Added
 
