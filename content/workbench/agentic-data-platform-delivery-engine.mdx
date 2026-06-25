@@ -35,3 +35,24 @@ problem: Platform onboarding work often depends on tacit senior-engineer knowled
 approach: The system separates planning, implementation, review, testing, documentation, and pull-request creation into specialised agents. Deterministic hooks enforce branch, compile, test, and audit rules so the model generates work while the workflow controls quality.
 learned: Agentic systems become useful when the model is not treated as the control plane. The durable pattern is structured context, explicit responsibility boundaries, and boring guardrails that do not negotiate.
 ---
+
+Data platform onboarding has a reproducibility problem. The work itself is not difficult — it follows recognisable patterns across engagements. But the knowledge that makes it fast lives in the heads of senior engineers. It shows up as judgement calls during setup, as informal review comments, as the instinct to know which shortcuts matter and which create debt. When those engineers are not available or when a project scales beyond what one person can hold, delivery slows and quality becomes inconsistent.
+
+This system is an attempt to make that tacit knowledge explicit enough for agents to execute reliably.
+
+## How it works
+
+The system is structured around role separation. A planning agent interprets architecture standards and produces a task breakdown with enough context for downstream agents to proceed without rework. An implementation agent carries out the work against a specific scaffold — a Snowflake schema, a dbt model set, a Terraform module, a Jira board structure. Review agents check the output against the same standards that informed the plan. A documentation agent captures decisions and rationale in a form engineers can actually read later. A PR agent packages the result and routes it for human sign-off.
+
+The important constraint is that agents do not talk directly to each other. They communicate through structured artefacts — files, tickets, pull requests — and deterministic hooks enforce the gates between phases. A branch that fails compilation does not advance. A PR missing required audit fields does not get created. The model generates work; the workflow controls quality.
+
+## What held up and what did not
+
+The separation of planning from implementation turned out to be more important than expected. When a single agent handles both, it compresses the gap between "here is what needs to be done" and "here is what I have done" in ways that are hard to audit. Separating them forces the plan into a reviewable artefact before any code is written. That one structural decision reduced rework significantly.
+
+The harder problem is context at the boundary. An agent handed a task with underspecified context will either fail visibly or succeed in ways that satisfy the letter of the task but miss the intent. Getting the planning output structured well enough that downstream agents do not need to reinterpret it took longer than the agent implementation itself.
+
+The system works well for predictable delivery work. It is not well-suited to novel problems where the right approach is not yet clear — that still requires a human in the loop earlier and more frequently.
+
+Human approval gates are kept at branching, review, and merge. The model does not push to production, close tickets autonomously, or update shared configuration without a human confirming the output first. Automation should reduce friction on known work, not compress the feedback loop on decisions that still need judgement.
+

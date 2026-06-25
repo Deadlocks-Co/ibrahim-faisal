@@ -25,3 +25,24 @@ problem: Small inconsistencies in setup, naming, workflow, and handoff compound 
 approach: ARB packages delivery conventions, templates, and workflow helpers into a lightweight toolkit. It favours clear defaults over clever abstractions.
 learned: Good tooling is usually less about automation volume and more about making the correct path obvious.
 ---
+
+Delivery work generates friction in places that are easy to underestimate. Not in the hard parts — the hard parts get attention. It accumulates in the small repeated decisions: what to name this repository, how to structure the branching model, where the handoff documentation lives, what the PR template expects, which linter configuration matches what was agreed on the last project. Each of these decisions is low stakes in isolation. Collectively, inconsistency in them creates invisible tax that compounds across every new project and new team member.
+
+ARB is a response to that specific problem. Not automation for its own sake, but a packaged set of defaults that remove the need to make the same low-stakes decisions again.
+
+## What it packages
+
+The toolkit is a collection of templates, scripts, and lightweight workflow helpers that encode the delivery conventions that have proven useful across multiple engagements. Repository initialisation scripts that set up the agreed folder structure, naming convention, and initial configuration. PR and commit message templates that match the review expectations teams have already committed to. Linting and formatting configurations that do not need to be debated at the start of each project. Documentation stubs for the artefacts that always get created late when left unscrutinised.
+
+None of this is clever. That is deliberate. The value of a convention tool is inversely related to how much it asks engineers to understand before they can use it.
+
+## What it is not
+
+ARB does not try to enforce process. It does not block commits that deviate from the template or fail builds for documentation gaps. The goal is to make the correct path the easiest path — not to make deviation impossible. A team that wants to diverge from a default can. The expectation is that having a well-considered default reduces the frequency of divergence that happens for no good reason.
+
+It also does not try to cover novel situations. The templates encode decisions that have been made and validated before. For genuinely new problems, a blank page is still the right starting point.
+
+## Current state
+
+ARB is a prototype that reflects the conventions of a specific set of engagements. The right long-term direction is probably a more structured configuration layer that lets teams override defaults explicitly rather than implicitly. That work has not happened yet. For now it does what it needs to do: reduce the setup friction on familiar work so the first two days of a project are spent on the project, not on configuration.
+
