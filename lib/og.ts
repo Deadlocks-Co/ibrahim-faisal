@@ -8,7 +8,9 @@ export function buildMetadata(config: {
 }): Metadata {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
   const fullUrl = config.url ? `${siteUrl}${config.url}` : siteUrl;
-  const imageUrl = config.image || "/og.svg";
+  const imageUrl = config.image
+    ? config.image.startsWith("http") ? config.image : `${siteUrl}${config.image}`
+    : `${siteUrl}/og.svg`;
 
   return {
     title: config.title,
