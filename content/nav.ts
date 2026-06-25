@@ -1,6 +1,6 @@
 export const navLinks = [
   { label: "Deadlock Labs", href: "/deadlock-labs" },
-  { label: "Projects", href: "/projects" },
+  { label: "Workbench", href: "/workbench" },
   { label: "Writing", href: "/writing" },
   { label: "Photography", href: "/photography" },
   { label: "Culture", href: "/culture" },

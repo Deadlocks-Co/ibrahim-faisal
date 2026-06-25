@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight, Wrench } from "lucide-react";
-import { workbenchItems } from "@/content/workbench";
+import { getCollection } from "@/lib/content";
 
 export function WorkbenchPreview() {
-  const featured = workbenchItems.filter((item) => item.featured).slice(0, 3);
+  const featured = getCollection("workbench").filter((item) => item.featured).slice(0, 3);
 
   return (
     <section className="border-t py-20">
@@ -28,11 +28,11 @@ export function WorkbenchPreview() {
           {featured.map((item) => (
             <Link key={item.slug} href={`/workbench/${item.slug}`} className="rounded-xl border p-6 transition hover:bg-muted/40">
               <div className="flex items-center justify-between gap-4 text-xs uppercase tracking-widest text-muted-foreground">
-                <span>{item.category}</span>
-                <span>{item.status}</span>
+                <span>{String(item.category)}</span>
+                <span>{String(item.status)}</span>
               </div>
-              <h3 className="mt-5 text-sm font-medium">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.summary}</p>
+              <h3 className="mt-5 text-sm font-medium">{String(item.title)}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{String(item.summary)}</p>
             </Link>
           ))}
         </div>

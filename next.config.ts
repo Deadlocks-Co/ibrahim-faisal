@@ -30,6 +30,16 @@ const nextConfig: NextConfig = {
         source: "/founder",
         destination: "/deadlock-labs/founder",
         permanent: true
+      },
+      {
+        source: "/projects",
+        destination: "/workbench",
+        permanent: true
+      },
+      {
+        source: "/projects/:slug",
+        destination: "/workbench/:slug",
+        permanent: true
       }
     ];
   }
