@@ -1,6 +1,26 @@
 # Changelog
 
-## Unreleased — Sprint 06: About Page Redesign
+## Unreleased — Sprint 07: Contact and Culture MDX Migration
+
+### Added
+
+- `content/contact/contact.mdx` — contact page as singleton MDX with real social links (X, GitHub); drops placeholder email
+- `content/culture/culture.mdx` — culture sections as singleton MDX with YAML-structured items
+- `docs/sprints/sprint-07.md` — sprint record
+
+### Changed
+
+- `app/contact/page.tsx` — redesigned as async Server Component with proper header, link cards, and MDX body
+- `app/culture/page.tsx` — reads from `getItem("culture", "culture")` instead of `content/culture`
+- `components/culture-preview.tsx` — reads from `getItem("culture", "culture")` instead of `content/culture`
+
+### Removed
+
+- `content/culture.ts` — retired; replaced by `content/culture/culture.mdx`
+
+---
+
+## Sprint 06: About Page Redesign
 
 ### Added
 

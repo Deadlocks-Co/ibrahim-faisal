@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 06: About Page Redesign
+Sprint 07: Contact and Culture MDX Migration
 
 ## Current Focus
 
-Sprint 06 is complete. The About page is now MDX-backed, properly designed with a two-column layout, and renders a real prose bio with a sticky sidebar.
+Sprint 07 is complete. Contact page redesigned with real social links and no placeholder email. Culture page and preview component migrated from `culture.ts` to `content/culture/culture.mdx`. `content/culture.ts` removed.
 
-Sprint 07 candidate: Contact page, culture page migration, or a new content section.
+Sprint 08 candidate: Legacy file cleanup (`writing.ts`), Photography with real images, or new feature work.
 
 ## Operating Rules
 
@@ -298,10 +298,48 @@ Sprint 07 candidate: Contact page, culture page migration, or a new content sect
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/about-page` into `main`.
 
+## Sprint 7 Tasks — Complete
+
+### 1. Contact Page
+
+- [x] `content/contact/contact.mdx` created with frontmatter (tagline, links) and prose body
+- [x] Real social links only: X / Twitter, GitHub — placeholder email removed
+- [x] `app/contact/page.tsx` redesigned as async Server Component with header, link cards, MDX body
+
+### 2. Culture MDX Migration
+
+- [x] `content/culture/culture.mdx` created with YAML-structured sections (label, items: title, subtitle, status, optional note)
+- [x] `app/culture/page.tsx` updated to `getItem("culture", "culture")` with local interface types
+- [x] `components/culture-preview.tsx` updated — was also importing from `content/culture`, fixed before deletion
+- [x] `content/culture.ts` removed
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-07.md` added.
+- [x] `CHANGELOG.md` Sprint 07 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 36 pages, TypeScript clean.
+- [x] `/contact` renders MDX content correctly.
+- [x] `/culture` renders from MDX content correctly.
+- [x] Homepage `CulturePreview` reads from MDX.
+- [x] No direct commits to `main`.
+- [x] `lib/content.ts` unchanged.
+
+## Definition of Done — Sprint 7
+
+- [x] `/contact` uses `content/contact/contact.mdx`; no placeholder email.
+- [x] `/culture` and `CulturePreview` use `content/culture/culture.mdx`.
+- [x] `content/culture.ts` retired.
+- [x] Documentation explains what changed and why.
+- [x] PR opened from `feature/contact-and-culture` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 07 (TBD):
+Sprint 08 (TBD):
 
-- Contact page redesign using the singleton MDX pattern.
-- Culture page migration from TypeScript to MDX.
-- A new content section if one becomes relevant.
+- Clean up `content/writing.ts` (legacy, unmounted).
+- Photography section with real images when available.
+- New feature: Lab Notes tag filtering, or a fourth lab note.
