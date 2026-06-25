@@ -7,6 +7,8 @@ export function SiteFooter() {
           <a href="https://x.com/IbrahimKFaisal" className="hover:text-foreground">X</a>
           <a href="https://github.com/" className="hover:text-foreground">GitHub</a>
           <a href="https://linkedin.com/" className="hover:text-foreground">LinkedIn</a>
+          <a href="https://medium.com/@ikfaisal" className="hover:text-foreground">Medium</a>
+          <a href="https://substack.com/@ikfaisal" className="hover:text-foreground">Substack</a>
         </div>
       </div>
     </footer>
