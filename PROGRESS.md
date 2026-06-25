@@ -2,13 +2,13 @@
 
 ## Current Sprint
 
-Sprint 07: Contact and Culture MDX Migration
+Sprint 08: Legacy Code Cleanup
 
 ## Current Focus
 
-Sprint 07 is complete. Contact page redesigned with real social links and no placeholder email. Culture page and preview component migrated from `culture.ts` to `content/culture/culture.mdx`. `content/culture.ts` removed.
+Sprint 08 is complete. Writing and Projects dead code clusters removed. Build reduced from 36 to 30 pages. Remaining legacy files: `content/nav.ts` (structural, keep) and `content/photos.ts` (Photography is live; needs real images).
 
-Sprint 08 candidate: Legacy file cleanup (`writing.ts`), Photography with real images, or new feature work.
+Sprint 09 candidate: Photography with real images, a new lab note, or new feature work.
 
 ## Operating Rules
 
@@ -336,10 +336,47 @@ Sprint 08 candidate: Legacy file cleanup (`writing.ts`), Photography with real i
 - [x] Documentation explains what changed and why.
 - [x] PR opened from `feature/contact-and-culture` into `main`.
 
+## Sprint 8 Tasks — Complete
+
+### 1. Writing Cluster Deleted
+
+- [x] `content/writing.ts` removed
+- [x] `components/writing-preview.tsx` removed — unmounted since Sprint 03
+- [x] `components/writing-archive.tsx` removed — client component, unmounted
+- [x] `components/x-embed.tsx` removed — only used by the writing page
+- [x] `app/writing/page.tsx` and directory removed — redirected to `/lab-notes` since Sprint 03
+
+### 2. Projects Cluster Deleted
+
+- [x] `content/projects.ts` removed — content covered by `content/workbench/*.mdx`
+- [x] `components/project-preview.tsx` removed — unmounted since Sprint 01
+- [x] `app/projects/page.tsx` removed — redirected to `/workbench` since Sprint 02
+- [x] `app/projects/[slug]/page.tsx` and directory removed — redirected to `/workbench/[slug]` since Sprint 02
+
+### 3. Documentation
+
+- [x] `PROGRESS.md` updated before PR.
+- [x] `docs/sprints/sprint-08.md` added.
+- [x] `CHANGELOG.md` Sprint 08 section added.
+
+### 4. Quality Gate
+
+- [x] Build passes — 30 pages (down from 36), TypeScript clean.
+- [x] All redirects remain in place (`/writing` → `/lab-notes`, `/projects` → `/workbench`).
+- [x] No live pages broken.
+- [x] No direct commits to `main`.
+
+## Definition of Done — Sprint 8
+
+- [x] Writing and Projects dead code clusters fully removed.
+- [x] Build output reflects only live routes.
+- [x] Documentation explains what was removed and why.
+- [x] PR opened from `feature/legacy-cleanup` into `main`.
+
 ## Next Sprint Candidate
 
-Sprint 08 (TBD):
+Sprint 09 (TBD):
 
-- Clean up `content/writing.ts` (legacy, unmounted).
-- Photography section with real images when available.
-- New feature: Lab Notes tag filtering, or a fourth lab note.
+- Photography with real images when available.
+- A new lab note.
+- New feature work on Deadlock Labs or Lab Notes.

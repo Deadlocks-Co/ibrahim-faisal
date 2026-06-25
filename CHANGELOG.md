@@ -1,6 +1,27 @@
 # Changelog
 
-## Unreleased — Sprint 07: Contact and Culture MDX Migration
+## Unreleased — Sprint 08: Legacy Code Cleanup
+
+### Removed
+
+- `content/writing.ts` — legacy writing items array
+- `components/writing-preview.tsx` — unmounted since Sprint 03
+- `components/writing-archive.tsx` — unmounted; client component with search/filter UI
+- `components/x-embed.tsx` — only used by the writing page
+- `app/writing/page.tsx` — redirected to `/lab-notes` since Sprint 03
+- `content/projects.ts` — legacy projects array; content covered by `content/workbench/*.mdx`
+- `components/project-preview.tsx` — unmounted since Sprint 01
+- `app/projects/page.tsx` — redirected to `/workbench` since Sprint 02
+- `app/projects/[slug]/page.tsx` — redirected to `/workbench/[slug]` since Sprint 02
+- `docs/sprints/sprint-08.md` — sprint record
+
+### Notes
+
+Build reduced from 36 pages to 30 pages. All redirects remain in place.
+
+---
+
+## Sprint 07: Contact and Culture MDX Migration
 
 ### Added
 
