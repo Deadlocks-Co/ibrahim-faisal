@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, BrainCircuit, FlaskConical, Layers3 } from "lucide-react";
 import { Hero } from "@/components/hero";
-import { ProjectPreview } from "@/components/project-preview";
+import { WorkbenchPreview } from "@/components/workbench-preview";
 import { WritingPreview } from "@/components/writing-preview";
 import { PhotoPreview } from "@/components/photo-preview";
 import { CulturePreview } from "@/components/culture-preview";
@@ -25,7 +25,7 @@ function DeadlockLabsHomeSection() {
               A personal lab for ideas, systems, prototypes, and future products.
             </h2>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-muted-foreground">
-              I use Deadlock Labs to share brainchildren across AI, data, language, communities, and interactive products with friends, colleagues, builders, and future collaborators.
+              I use Deadlock Labs to share explorations across AI, data, language, communities, and interactive products with friends, colleagues, builders, and future collaborators.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {["AI Systems", "Vertical Products", "Interactive Experiences"].map((lane) => (
@@ -61,7 +61,7 @@ export default function HomePage() {
     <main>
       <Hero />
       <DeadlockLabsHomeSection />
-      <ProjectPreview />
+      <WorkbenchPreview />
       <WritingPreview />
       <PhotoPreview />
       <CulturePreview />
