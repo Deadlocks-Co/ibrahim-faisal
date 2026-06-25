@@ -1,0 +1,47 @@
+---
+title: Why AI Demos Don't Survive Production
+slug: demos-vs-production
+summary: The demo works because the conditions are controlled. Production is the thing that removes all the controls.
+published: "2026-06-01"
+updated: "2026-06-20"
+tags:
+  - AI
+  - engineering
+  - production
+  - agentic-systems
+draft: false
+---
+
+Every AI demo I have seen has worked. That's not a compliment.
+
+Demos work because the person running them knows exactly what inputs produce the right outputs. They have curated the examples, chosen the prompt that generates the impressive result, and quietly avoided the cases that don't. This is not dishonesty — it's a natural consequence of showing something before it's fully understood. The problem is that the demo creates an expectation the production system can't meet, and the gap between them is where most AI projects quietly die.
+
+## What the demo doesn't test
+
+A demo tests the happy path with a sympathetic user and a controlled input. Production tests everything else.
+
+In a real deployment, inputs arrive from users who don't know what the system expects. Requests are ambiguous, malformed, or deliberately adversarial. The model that looked confident in the demo starts hedging, hallucinating, or producing outputs that are technically correct and practically useless. And because the system wasn't designed to surface these failures, they often accumulate silently for days before anyone notices.
+
+The demo also doesn't test volume, latency under load, the cost of running ten thousand requests instead of ten, or what happens when an upstream API returns a 503. These are engineering problems, not AI problems, but they become AI problems the moment the model is in the critical path.
+
+## The integration surface problem
+
+Most demos run the model in isolation. Production requires the model to work alongside databases, APIs, queues, validation logic, downstream consumers, and sometimes other models. Each integration point is a place where the system can fail in a way the demo never showed.
+
+I've seen production agentic systems break not because the model was wrong, but because the model's output format changed slightly between versions, and nothing downstream was checking for it. The model was still "working" by any reasonable definition. The pipeline was not.
+
+The integration surface grows faster than most teams anticipate. Every new data source, every new output consumer, every new environment the system runs in adds to the blast radius when something changes. Design for this early or spend later sprints on nothing but firefighting.
+
+## The confidence calibration gap
+
+Demo outputs look confident. Production outputs from the same model, with real inputs, are often less certain — and the system usually has no way to communicate that uncertainty to the downstream consumer or the user.
+
+This matters because a confident-looking wrong answer is more dangerous than an obvious failure. An obvious failure gets fixed. A confident wrong answer gets trusted, acted on, and sometimes embedded in decisions that are hard to reverse.
+
+If your system can't express uncertainty — if it doesn't know when to say "I'm not sure about this" — it will eventually produce a confident wrong answer at the worst possible moment.
+
+## What actually helps
+
+The teams that navigate this well are not the ones with the best models. They're the ones who designed for failure from the start: evaluation harnesses before the first production deploy, explicit contracts at every integration point, observable systems that surface errors immediately rather than letting them accumulate, and a culture that treats a production failure as information rather than embarrassment.
+
+The demo is a hypothesis. Production is the experiment. Design accordingly.

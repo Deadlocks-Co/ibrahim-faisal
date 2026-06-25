@@ -1,6 +1,23 @@
 # Changelog
 
-## Unreleased — Sprint 08: Legacy Code Cleanup
+## Unreleased — Sprint 09: Real Photos and Fourth Lab Note
+
+### Added
+
+- `public/photos/DLF_7196.JPG` — bird in jacaranda blossom
+- `public/photos/PXL_20251129_053948506.jpg` — turtles on rocks by a garden pond
+- `public/photos/PXL_20260103_102418113~2.jpg` — full moon through clouds
+- `public/photos/PXL_20260214_072717489.jpg` — floral tribute outside a mural building
+- `content/notes/demos-vs-production.mdx` — lab note on the gap between AI demos and production
+- `docs/sprints/sprint-09.md` — sprint record
+
+### Changed
+
+- `content/photos.ts` — real filenames, dimensions, alt text, titles, and categories; placeholder SVG entries removed
+
+---
+
+## Sprint 08: Legacy Code Cleanup
 
 ### Removed
 
