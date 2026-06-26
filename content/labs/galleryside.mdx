@@ -1,0 +1,24 @@
+---
+title: GallerySide
+slug: galleryside
+summary: A character-driven Bangla cricket commentary engine for Bangladesh matches — four distinct hosts, two active at a time, speaking in voice through a stats-firewalled pipeline that defaults to silence.
+framing: Exploring whether four distinct AI character voices, grounded by a hard stats firewall and a silence-first speak gate, can produce live cricket commentary that sounds like real people watching together.
+category: AI Systems
+status: Researching
+icon: Bot
+published: "2026-06-26"
+updated: "2026-06-26"
+draft: false
+tags:
+  - AI
+  - commentary
+  - cricket
+  - Bangla
+  - character-driven
+problem: AI-generated sports commentary either invents statistics it was never given, speaks on every ball regardless of whether the moment earned it, or loses character identity after a few exchanges. The result sounds like a single generic voice narrating, not a panel disagreeing about what they just watched.
+exploration: A linear ball-by-ball Python pipeline where each module has one contract. A BallEvent normalises deliveries across data sources. A stats firewall computes derived numbers and hard-limits what the LLM can cite — it never fabricates a figure. A speak gate defaults to silence and fires only when a delivery crosses trigger thresholds. Four fixed Bangladeshi hosts (optimist, doomer, analyst, realist) rotate in pairs every five overs, with a friction rule that ensures the two active characters always carry some tension. Character identity lives in per-character config files so voice is tunable without touching code. The LLM client is injected, so the real Anthropic API and a scripted fake both satisfy the same protocol. 107 tests run fully offline.
+audience: Bangla cricket fans following Bangladesh matches. Secondarily, builders interested in character-consistent multi-agent dialogue systems and the silence-default design pattern.
+model: No commercial model yet. The system is a research prototype exploring the design constraints for character-consistent AI commentary at the delivery level.
+risks: Hallucination risk is structurally bounded by the stats firewall but not eliminated — if the data source sends a wrong number, the firewall repeats it faithfully. Character consistency degrades over long matches as the context window rolls. The silence default makes the system feel considered but also means a cautious speak gate leaves long quiet stretches on low-drama matches. Bangla voice quality depends heavily on LLM Bangla capability, which is uneven.
+notes: The silence default was the hardest design decision to commit to and the most important. A system that speaks on every ball is a monologue with character costumes. The speak gate earning its fire is not a filter on output — it is what makes the output mean something. The stats firewall invariant (LLM only rephrases numbers from the facts dict, never originates them) is the other non-negotiable. Without it, the commentary reads confident and wrong.
+---
