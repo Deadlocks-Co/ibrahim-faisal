@@ -2,9 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, BrainCircuit, FlaskConical, Layers3 } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { WorkbenchPreview } from "@/components/workbench-preview";
-import { LabNotesPreview } from "@/components/lab-notes-preview";
 import { PhotoPreview } from "@/components/photo-preview";
-import { CulturePreview } from "@/components/culture-preview";
 
 const labStats = [
   { label: "Exploration lanes", value: "3" },
@@ -62,9 +60,7 @@ export default function HomePage() {
       <Hero />
       <DeadlockLabsHomeSection />
       <WorkbenchPreview />
-      <LabNotesPreview />
       <PhotoPreview />
-      <CulturePreview />
     </main>
   );
 }
