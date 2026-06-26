@@ -45,6 +45,21 @@ const nextConfig: NextConfig = {
         source: "/writing",
         destination: "/lab-notes",
         permanent: true
+      },
+      {
+        source: "/lab-notes",
+        destination: "/workbench/notes",
+        permanent: true
+      },
+      {
+        source: "/photography",
+        destination: "/outside",
+        permanent: true
+      },
+      {
+        source: "/culture",
+        destination: "/outside/culture",
+        permanent: true
       }
     ];
   }
