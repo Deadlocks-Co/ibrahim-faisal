@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getCollection, getItem } from "@/lib/content";
+import { MdxPre } from "@/components/mdx-pre";
 
 const mdxOptions = { remarkPlugins: [remarkGfm] };
 
@@ -54,7 +55,7 @@ export default async function WorkbenchItemPage({ params }: { params: Promise<{ 
 
         {item.body && (
           <article className="prose prose-sm prose-neutral dark:prose-invert max-w-none mt-10">
-            <MDXRemote source={String(item.body)} options={{ mdxOptions }} />
+            <MDXRemote source={String(item.body)} options={{ mdxOptions }} components={{ pre: MdxPre }} />
           </article>
         )}
 

@@ -18,8 +18,8 @@ export function Hero() {
           <a href="/deadlock-labs" className="underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
             Explore Deadlock Labs
           </a>
-          <a href="/workbench" className="text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
-            View workbench
+          <a href="/workbench" className="underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
+            View Workbench
           </a>
         </div>
       </div>

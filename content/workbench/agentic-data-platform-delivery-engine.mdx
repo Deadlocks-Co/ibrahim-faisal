@@ -1,14 +1,14 @@
 ---
-title: Agentic Data Platform Delivery Engine
+title: Agentic Data Platform
 slug: agentic-data-platform-delivery-engine
-summary: A multi-agent delivery system for turning architecture standards into repeatable data-platform implementation workflows.
+summary: A structured Claude Code knowledge base that encodes senior consultant craft into six role-separated agents, four lifecycle commands, deterministic hooks, and a data contract as the single source of truth.
 category: AI Systems
 status: Active
 year: "2026"
 featured: true
 draft: false
 published: "2026-01-01"
-updated: "2026-06-01"
+updated: "2026-06-26"
 tags:
   - AI
   - multi-agent
@@ -19,10 +19,10 @@ stack:
   - Multi-Agent Architecture
   - Snowflake
   - dbt
-  - Terraform
-  - AWS
   - Jira
   - Bitbucket
+  - Python
+  - Bash
 relatedLabs:
   - SideKick
 links:
@@ -31,28 +31,208 @@ links:
   - label: Discuss this tool
     href: "mailto:ibrahim.faisal@vivanti.com?subject=Agentic%20Delivery%20Engine"
 purpose: Built to test whether AI agents can coordinate real delivery work through explicit roles, hard gates, pull requests, and audit trails.
-problem: Platform onboarding work often depends on tacit senior-engineer knowledge, manual ticket updates, repeated scaffolding, and late quality checks. That makes delivery slower than it should be and harder to reproduce across engagements.
-approach: The system separates planning, implementation, review, testing, documentation, and pull-request creation into specialised agents. Deterministic hooks enforce branch, compile, test, and audit rules so the model generates work while the workflow controls quality.
-learned: Agentic systems become useful when the model is not treated as the control plane. The durable pattern is structured context, explicit responsibility boundaries, and boring guardrails that do not negotiate.
+problem: Data platform delivery depends on tacit senior-engineer knowledge that does not transfer across engagements. Onboarding a new source system in a new client environment requires the same sequence of decisions every time — but when those decisions live only in people's heads, quality is inconsistent and delivery slows.
+approach: Encode craft into a Claude Code knowledge base. Six specialised agents own discrete layers. A data contract is the authoritative input for every artefact. Deterministic hooks block unsafe actions before they happen. A peer-review skill routes generated artefacts to a second model before any branch is committed. Humans approve at the gate; the system handles the repeatable work between decisions.
+learned: The model is not the control plane. Durable agentic systems separate what the model generates from what the workflow enforces. When those two concerns collapse into each other — when the model decides what is safe to commit — quality degrades and the system becomes unauditable.
 ---
 
-Data platform onboarding has a reproducibility problem. The work itself is not difficult — it follows recognisable patterns across engagements. But the knowledge that makes it fast lives in the heads of senior engineers. It shows up as judgement calls during setup, as informal review comments, as the instinct to know which shortcuts matter and which create debt. When those engineers are not available or when a project scales beyond what one person can hold, delivery slows and quality becomes inconsistent.
+Data platform delivery has a reproducibility problem that does not come from the work being difficult. Ingesting a JSON event stream into Snowflake, building a dbt staging model, wiring up Bitbucket Pipelines — these are recognisable patterns. The problem is that the knowledge which makes them fast and safe lives in senior engineers: which schemachange version range a migration belongs in, when to use `merge` versus `append` in dbt, what the `branch-guard` should block, what a peer reviewer needs to flag as an error versus a warning. When those engineers are spread across engagements, or when a client needs to stand up a platform quickly, the tacit knowledge becomes the bottleneck.
 
-This system is an attempt to make that tacit knowledge explicit enough for agents to execute reliably.
+`vivanti-adp` is an attempt to make that knowledge explicit enough for agents to execute reliably.
 
-## How it works
+## What the system actually is
 
-The system is structured around role separation. A planning agent interprets architecture standards and produces a task breakdown with enough context for downstream agents to proceed without rework. An implementation agent carries out the work against a specific scaffold — a Snowflake schema, a dbt model set, a Terraform module, a Jira board structure. Review agents check the output against the same standards that informed the plan. A documentation agent captures decisions and rationale in a form engineers can actually read later. A PR agent packages the result and routes it for human sign-off.
+The project is a directory — a Claude Code knowledge base pointed at with `claude .`. It is not a runnable application. Claude Code reads `CLAUDE.md` on startup and the rest loads on demand as work requires.
 
-The important constraint is that agents do not talk directly to each other. They communicate through structured artefacts — files, tickets, pull requests — and deterministic hooks enforce the gates between phases. A branch that fails compilation does not advance. A PR missing required audit fields does not get created. The model generates work; the workflow controls quality.
+```
+vivanti-adp/
+├── CLAUDE.md                    ← identity, routing, always-on policy imports
+├── agents/                      ← craft knowledge per role
+├── engagements/                 ← one folder per client engagement
+├── skills/                      ← reusable workflows
+├── knowledge/domain/            ← generic technical patterns
+├── hooks/                       ← automation scripts
+├── scripts/                     ← CLI utilities
+└── memory/patterns/             ← promoted patterns (3x recurrence threshold)
+```
 
-## What held up and what did not
+The architecture principle behind this layout is deliberate: agents encode *how to do the work well*, engagements encode *what to build and for whom*, and skills encode *repeatable sequences that coordinate agents*. None of these concerns bleeds into another.
 
-The separation of planning from implementation turned out to be more important than expected. When a single agent handles both, it compresses the gap between "here is what needs to be done" and "here is what I have done" in ways that are hard to audit. Separating them forces the plan into a reviewable artefact before any code is written. That one structural decision reduced rework significantly.
+## Six agents, one data contract
 
-The harder problem is context at the boundary. An agent handed a task with underspecified context will either fail visibly or succeed in ways that satisfy the letter of the task but miss the intent. Getting the planning output structured well enough that downstream agents do not need to reinterpret it took longer than the agent implementation itself.
+The agent roster maps directly to the layers of a cloud-native data platform:
 
-The system works well for predictable delivery work. It is not well-suited to novel problems where the right approach is not yet clear — that still requires a human in the loop earlier and more frequently.
+| Agent | Owns |
+|---|---|
+| Platform Engineer | Cloud infra, Terraform, compute, storage, networking |
+| Data Engineer | Raw/landing DDL, schemachange migrations, Snowpipe, stages |
+| dbt Engineer | Staging, silver, gold dbt models — transformation layer |
+| DevOps | Bitbucket Pipelines, branching strategy, secrets, deployments |
+| Technical Writer | README, data dictionary, Confluence docs, runbook |
+| Report Developer | Semantic views, Cortex Analyst, dashboards, Snowflake Intelligence |
 
-Human approval gates are kept at branching, review, and merge. The model does not push to production, close tickets autonomously, or update shared configuration without a human confirming the output first. Automation should reduce friction on known work, not compress the feedback loop on decisions that still need judgement.
+No agent loads unless it is explicitly activated. A session starts with `session-bootstrap.sh` printing active engagements, open task counts, and the available roster. From that point, the system routes based on what is asked — "As the Data Engineer, generate the landing DDL for the POS source" loads `agents/data-engineer.md`; nothing else changes.
 
+The data contract at `engagements/{name}/data-contract.md` is the source of truth for every artefact. The Data Engineer does not write a single line of SQL until the contract's Source Schemas section is confirmed. The dbt Engineer does not build a staging model until the raw layer exists and the ingest count is greater than zero. The schemachange version range a migration falls into — V001 for raw DDL, V002 for ingest objects, V010+ for schema evolution — is determined by the contract, not the agent's judgement.
+
+```
+engagements/aurora-retail-au/
+├── config/
+│   ├── delivery.yml             ← git or file delivery mode
+│   ├── repos.yml                ← repo slugs and clone URLs
+│   ├── jira.yml                 ← project key, epic structure
+│   └── confluence.yml           ← space key, doc set plan
+├── context.md                   ← client, phase, stakeholders, decisions log
+├── data-contract.md             ← source of truth — drives all artefact generation
+├── repos.md                     ← repo split and ownership
+└── artifacts/tasks.md           ← GENERATED by /adp:init — never hand-maintained
+```
+
+## The delivery lifecycle
+
+Four slash commands cover the full engagement lifecycle in sequence:
+
+```
+/adp:discover  →  /adp:init  →  /adp:develop  →  /adp:document
+```
+
+`/adp:discover` runs `scripts/adp-discover.sh` — a read-only readiness check that validates the data contract, context, repos config, Jira credentials, and delivery mode before any artefact is generated. If any check fails, the session stops there.
+
+`/adp:init` generates `tasks.md` from the data contract via the `tasks-gen` skill and mirrors it to Jira — project + epics + tasks, each with a Goal and Done-when. Tasks carry stable IDs (`T-001..T-NNN`) that persist across regenerations. DRAFT-status sources in the contract get exactly two tasks: confirm schema with client, flip status to CONFIRMED. No build tasks are generated for unconfirmed sources.
+
+`/adp:develop` is the build loop. It picks the next eligible task by dependency order, loads the owning agent, generates artefacts, raises a first PR, routes it through independent peer review, fixes findings, and raises a second PR for human approval. The loop posts a Jira comment at every step — the audit trail is in the ticket, not in a terminal session that has already closed.
+
+`/adp:document` publishes the Confluence doc set: architecture overview, data dictionary, runbook, and AI layer documentation. Diagrams are generated as draw.io XML when Confluence supports it, Mermaid otherwise.
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+graph TD
+    DC["data-contract.md\n(source of truth)"] --> INIT["/adp:init\ntasks-gen skill"]
+    INIT --> TM["tasks.md\n+ Jira board"]
+
+    TM --> DEV["/adp:develop\nbuild loop"]
+
+    DEV --> AGENT["Agent selection\nplatform-engineer\ndata-engineer\ndbt-engineer\ndevops"]
+
+    AGENT --> BUILD["Build artefacts\nbranch per repos.yml"]
+
+    BUILD --> BG["branch-guard.sh\nblocks writes to main"]
+    BG -->|pass| PR1["First PR\n+ Jira comment"]
+
+    PR1 --> PEER["peer-review skill\nsecond model\nAnthropicAPI"]
+    PEER -->|REJECT| FIX["Fix findings\nre-run checks"]
+    FIX --> PR1
+    PEER -->|APPROVE| PR2["Final PR\nhuman review gate"]
+    PR2 --> HUMAN["Human merges\n→ STOP"]
+
+    style DC fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style PEER fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style BG fill:#fdf0eb,stroke:#bc5a3a,stroke-width:1px
+    style BUILD fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style HUMAN fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+```
+
+## Quality gates: hooks and peer review
+
+Three hooks enforce the guardrails that keep generated work auditable.
+
+`hooks/branch-guard.sh` fires as a `PreToolUse` hook before any file write. If the target path is inside a client git repository and that repository is on `main` or `master`, the write is blocked and Claude is told to create a branch first. Writes inside the brain directory itself (`vivanti-adp`) are whitelisted — task state updates and memory writes must work regardless of branch.
+
+```bash
+# branch-guard.sh exit codes (Claude Code convention)
+exit 0   # allow
+exit 2   # BLOCK — stderr message fed back to Claude
+```
+
+`hooks/session-bootstrap.sh` runs at session start. It prints the current date, active engagements with phase and delivery mode, open task counts, and the loadable agent and skill roster. The output gives Claude the session context it needs without requiring the engineer to repeat it.
+
+`hooks/track-decisions.sh` appends a row to the engagement's Known Issues / Decisions Log table in `context.md`. Architecture decisions, won't-fix rationales, and schema status changes land in the decisions log alongside the date and owning agent.
+
+The peer-review skill routes completed artefacts to a second model before any branch is committed. The reviewer runs independently — a different model call with a different prompt, no shared context with the generator. The structured output format is fixed:
+
+```
+## PASS
+[files with no issues]
+
+## FINDINGS
+- FILE: V002__aurora_pos_ingest_objects.sql
+  SEVERITY: ERROR
+  LINE/OBJECT: POS_TRANSACTIONS_PIPE
+  ISSUE: AUTO_INGEST parameter missing — SQS notification will not trigger
+  FIX: Add AUTO_INGEST = TRUE to the COPY INTO pipe definition
+
+## VERDICT
+APPROVE | APPROVE WITH WARNINGS | REJECT
+```
+
+A `REJECT` verdict halts the workflow with exit code 1. A `REJECT` finding is never silently dropped or overridden. The review output is saved to `artefacts/peer-review-{date}.md` as part of the audit trail.
+
+## A real engagement: aurora-retail-au / LUMEN
+
+The aurora-retail-au engagement (a workshop client) demonstrates the full stack from raw ingest to natural-language analytics. The data contract specifies two source systems: Aurora POS (hourly JSON export to S3 + SQS notification) and reference data (daily CSV drops for stores and products). Both flow through Snowpipe into a bronze layer, then through dbt staging → silver → Kimball star schema → Snowflake Semantic View → Cortex Agent → Snowflake Intelligence.
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart LR
+    POS["Aurora POS\nJSON hourly"] -->|S3 + SQS| SP1["Snowpipe\nauto-ingest"]
+    REF["Stores + Products\nCSV daily"] -->|S3 + SQS| SP2["Snowpipe\nauto-ingest"]
+
+    SP1 --> BRZ["AURORA_LUMEN_BRONZE\nappend-only VARIANT"]
+    SP2 --> BRZ
+
+    BRZ --> STG["dbt staging\nflatten, type, canonical names"]
+    STG --> SLV["Silver\ndedup, SCD2 prep"]
+    SLV --> GLD["Gold\nKimball star schema"]
+
+    GLD --> SEM["LUMEN_SALES\nSemantic View"]
+    SEM --> AGT["LUMEN_ANALYST\nCortex Agent"]
+    AGT --> SI["Snowflake Intelligence\nnatural-language Q&A"]
+
+    style BRZ fill:#fdf0eb,stroke:#bc5a3a,stroke-width:1px
+    style GLD fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style AGT fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+```
+
+The Data Engineer generates the bronze DDL using `schemachange` versioned migrations. Every raw table is append-only. Every row gets a SHA-256 surrogate key from `METADATA$FILENAME` concatenated with `METADATA$FILE_ROW_NUMBER`. Every ingest object references `AUTO_INGEST = TRUE` and points to the SQS ARN from the data contract's Source System section. The peer reviewer checks all of this before the branch is committed.
+
+The dbt Engineer picks up from a confirmed handoff — "raw table exists, ingest is live, DEV count is greater than zero" — and builds staging models that flatten the VARIANT payload into typed columns with canonical names. Silver handles deduplication and SCD2 preparation for the reference entities. Gold is a Kimball star: `fact_sales_line`, `dim_store`, `dim_product`, `dim_date`, `dim_time`, `dim_payment_method`.
+
+The Report Developer builds a `CREATE SEMANTIC VIEW LUMEN_SALES` on the gold star, a Cortex Search service over `dim_product` for grounding product questions, and a Cortex Agent named `LUMEN_ANALYST` that uses both. The acceptance bar is three business questions answered correctly from synthetic data before the session closes.
+
+## What held up
+
+The separation between planning and implementation was non-negotiable to get right before anything else. When a single model call handles both — deciding what to build and then building it — the plan exists only in the model's context and there is nothing to audit, review, or hand back. Separating them forces the plan into `tasks.md`, which is reviewable, mirrored to Jira, and survives session boundaries.
+
+The harder problem was context at agent boundaries. An agent handed a task with underspecified context — no data contract section cited, no schema status confirmed, no delivery mode checked — either fails visibly or generates artefacts that satisfy the letter of the task but miss the intent. Getting the data contract structured well enough that downstream agents do not need to reinterpret it took longer than any single agent implementation.
+
+The peer-review skill works because the reviewer model is independent. When the generator and reviewer share the same context, the reviewer tends to confirm the generator's assumptions. Running them as separate API calls — different system prompts, no shared history — surfaces the assumptions the generator made and did not surface itself.
+
+## What the system does not do
+
+The develop command never merges. It never approves its own pull request. It never transitions a Jira issue to Done autonomously. Human approval gates sit at branching, review, and merge — the three moments where a decision made incorrectly is expensive to reverse. Automation handles the repeatable work between those decisions. The model does not compress the feedback loop on decisions that still require judgement.
