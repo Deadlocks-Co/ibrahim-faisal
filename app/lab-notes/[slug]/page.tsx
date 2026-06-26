@@ -22,7 +22,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${String(note.title)} — Ibrahim Faisal`,
     description: String(note.summary),
     url: `/lab-notes/${slug}`,
-    image: note.thumbnail != null ? String(note.thumbnail) : undefined
   });
 }
 
