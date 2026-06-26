@@ -6,7 +6,7 @@ export function Hero() {
           Founder of Deadlock Labs
         </p>
         <h1 className="mt-5 text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-          Ibrahim Faisal
+          Ibrahim F<span className="text-violet-500">ai</span>sal
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
           AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
