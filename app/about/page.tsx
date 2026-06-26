@@ -33,7 +33,7 @@ export default async function AboutPage() {
           {role}{role && location ? " · " : ""}{location}
         </p>
         <h1 className="mt-4 font-[family-name:var(--font-syne)] text-4xl font-bold tracking-wide md:text-5xl">
-          Ibrahim F<span className="text-indigo-500">ai</span>sal
+          Ibrahim F<span className="text-violet-500">ai</span>sal
         </h1>
         {tagline && (
           <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
