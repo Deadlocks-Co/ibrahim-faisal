@@ -1,6 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
+import { LabCarousel } from "@/components/lab-carousel";
+import type { ContentItem } from "@/lib/content";
 
-export function Hero() {
+export function Hero({ labs }: { labs: ContentItem[] }) {
+  const carouselLabs = labs.map((l) => ({
+    title: String(l.title),
+    framing: String(l.framing || l.summary),
+    status: String(l.status),
+    slug: String(l.slug),
+    category: String(l.category),
+  }));
+
   return (
     <section className="py-28 sm:py-36">
       <div className="mx-auto max-w-6xl px-6">
@@ -16,6 +26,9 @@ export function Hero() {
         <div className="mt-4 max-w-2xl text-sm text-muted-foreground">
           Deadlock Labs · Anthropic · OpenAI · Kimi · Snowflake · Azure · AWS · Python · SQL · C# · API · Automation · Social Business · Mentor · Sports · Antigravity · Photography
         </div>
+
+        <LabCarousel labs={carouselLabs} />
+
         <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
           <a
             href="/deadlock-labs"

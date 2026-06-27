@@ -3,6 +3,7 @@ import { ArrowUpRight, BrainCircuit, FlaskConical, Layers3 } from "lucide-react"
 import { Hero } from "@/components/hero";
 import { WorkbenchPreview } from "@/components/workbench-preview";
 import { PhotoPreview } from "@/components/photo-preview";
+import { getCollection } from "@/lib/content";
 
 const labStats = [
   { label: "Exploration lanes", value: "3" },
@@ -55,9 +56,11 @@ function DeadlockLabsHomeSection() {
 }
 
 export default function HomePage() {
+  const labs = getCollection("labs");
+
   return (
     <main>
-      <Hero />
+      <Hero labs={labs} />
       <DeadlockLabsHomeSection />
       <WorkbenchPreview />
       <PhotoPreview />
