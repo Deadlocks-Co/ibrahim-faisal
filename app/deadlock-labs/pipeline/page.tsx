@@ -4,7 +4,7 @@ const stages = [
   {
     name: "Seed Idea",
     description: "A raw problem, audience, or product instinct that needs sharper framing.",
-    items: ["SideKick", "Pally"]
+    items: ["Side Kick", "Pally"]
   },
   {
     name: "Researching",

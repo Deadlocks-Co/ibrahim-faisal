@@ -22,7 +22,7 @@ const categories = [
     ventures: [
       {
         slug: "sidekick",
-        title: "SideKick",
+        title: "Side Kick",
         status: "Concept",
         icon: Wrench,
         thesis: "AI workforce for Australian trades, covering quoting, scheduling, customer follow-up, and admin work.",
