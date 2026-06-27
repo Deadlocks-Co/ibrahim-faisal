@@ -1,3 +1,5 @@
+import { ArrowUpRight } from "lucide-react";
+
 export function Hero() {
   return (
     <section className="py-28 sm:py-36">
@@ -12,14 +14,20 @@ export function Hero() {
           AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
         </p>
         <div className="mt-4 max-w-2xl text-sm text-muted-foreground">
-          Deadlock Labs · Snowflake · Informatica · Salesforce · AWS · Kafka · AI Delivery Systems
+          Deadlock Labs · Anthropic · OpenAI · Kimi · Snowflake · Azure · AWS · Python · SQL · C# · API · Automation · Social Business · Mentor · Sports · Antigravity · Photography
         </div>
-        <div className="mt-8 flex gap-4 text-sm">
-          <a href="/deadlock-labs" className="underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
-            Explore Deadlock Labs
+        <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+          <a
+            href="/deadlock-labs"
+            className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition hover:bg-foreground/5"
+          >
+            Explore Deadlock Labs <ArrowUpRight className="h-3.5 w-3.5" />
           </a>
-          <a href="/workbench" className="underline decoration-muted-foreground/30 underline-offset-4 hover:decoration-foreground">
-            View Workbench
+          <a
+            href="/workbench"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
+          >
+            View Workbench <ArrowUpRight className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { ExternalLink } from "lucide-react";
 import { getItem } from "@/lib/content";
 
 const mdxOptions = { remarkPlugins: [remarkGfm] };
@@ -11,16 +10,10 @@ export const metadata: Metadata = {
   description: "Software engineer based in Sydney, focused on autonomous AI systems and cloud-native data platforms."
 };
 
-interface AboutLink {
-  label: string;
-  href: string;
-}
-
 export default async function AboutPage() {
   const about = getItem("about", "about");
 
   const focus = Array.isArray(about?.focus) ? (about.focus as string[]) : [];
-  const links = Array.isArray(about?.links) ? (about.links as AboutLink[]) : [];
   const role = about?.role != null ? String(about.role) : "";
   const location = about?.location != null ? String(about.location) : "";
   const tagline = about?.tagline != null ? String(about.tagline) : "";
@@ -59,25 +52,6 @@ export default async function AboutPage() {
             </div>
           )}
 
-          {links.length > 0 && (
-            <div className="rounded-2xl border bg-background/80 p-5">
-              <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Find me</h2>
-              <div className="mt-4 space-y-2">
-                {links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between rounded-xl border px-3 py-2 text-sm hover:bg-muted/60"
-                  >
-                    {link.label}
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
         </aside>
       </div>
     </main>

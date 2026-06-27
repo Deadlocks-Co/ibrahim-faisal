@@ -5,8 +5,8 @@ export function SiteFooter() {
         <p>© {new Date().getFullYear()} Ibrahim Faisal</p>
         <div className="flex gap-4">
           <a href="https://x.com/IbrahimKFaisal" className="hover:text-foreground">X</a>
-          <a href="https://github.com/" className="hover:text-foreground">GitHub</a>
-          <a href="https://linkedin.com/" className="hover:text-foreground">LinkedIn</a>
+          <a href="https://github.com/ikfaisal" className="hover:text-foreground">GitHub</a>
+          <a href="https://www.linkedin.com/in/ikfaisal/" className="hover:text-foreground">LinkedIn</a>
           <a href="https://medium.com/@ikfaisal" className="hover:text-foreground">Medium</a>
           <a href="https://substack.com/@ikfaisal" className="hover:text-foreground">Substack</a>
         </div>
