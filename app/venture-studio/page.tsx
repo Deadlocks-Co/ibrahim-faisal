@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Bot, BrainCircuit, Globe2, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
+import { ArrowUpRight, BrainCircuit, Globe2, Languages, Network, Sparkles, Store, Trophy, Wrench } from "lucide-react";
 import { StudioNav } from "@/components/studio-nav";
 
 const categories = [
@@ -13,13 +13,6 @@ const categories = [
         status: "Prototype",
         icon: Languages,
         thesis: "Sense-for-sense translation that preserves meaning, tone, and cultural context across Bangla and English.",
-      },
-      {
-        slug: "conversational-host-engine",
-        title: "Conversational Host Engine",
-        status: "Concept",
-        icon: Bot,
-        thesis: "A configurable AI host layer for guided interviews, onboarding flows, support intake, and interactive product experiences.",
       },
     ],
   },

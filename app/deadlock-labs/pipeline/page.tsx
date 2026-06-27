@@ -9,7 +9,7 @@ const stages = [
   {
     name: "Researching",
     description: "The idea is being tested through notes, specs, market reading, and conversations.",
-    items: ["Conversational Host Engine"]
+    items: []
   },
   {
     name: "Prototype",
