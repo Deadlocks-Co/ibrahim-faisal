@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { StudioNav } from "@/components/studio-nav";
 import { getCollection, getItem } from "@/lib/content";
 
@@ -47,6 +47,16 @@ export default async function DeadlockLabsIdeaPage({ params }: { params: Promise
           <p className="text-sm text-muted-foreground">{String(idea.status)}</p>
           <h1 className="mt-4 text-4xl font-light tracking-tight sm:text-6xl">{String(idea.title)}</h1>
           <p className="mt-6 text-base leading-8 text-muted-foreground sm:text-lg">{String(idea.framing || idea.summary)}</p>
+          {idea.url ? (
+            <a
+              href={String(idea.url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-80"
+            >
+              Visit {String(idea.title)} <ArrowUpRight className="h-4 w-4" />
+            </a>
+          ) : null}
         </div>
 
         <div className="mt-14 space-y-6">
