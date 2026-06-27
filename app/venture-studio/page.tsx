@@ -21,18 +21,18 @@ const categories = [
     description: "Narrow products for underserved operating niches where workflow pain is obvious and repeated.",
     ventures: [
       {
-        slug: "sidekick",
-        title: "Side Kick",
-        status: "Concept",
-        icon: Wrench,
-        thesis: "AI workforce for Australian trades, covering quoting, scheduling, customer follow-up, and admin work.",
-      },
-      {
         slug: "pally",
         title: "Pally",
         status: "Concept",
         icon: Store,
         thesis: "Loyalty infrastructure for ethnic grocery stores, designed around repeat purchasing and local community commerce.",
+      },
+      {
+        slug: "sidekick",
+        title: "Side Kick",
+        status: "Concept",
+        icon: Wrench,
+        thesis: "AI workforce for Australian trades, covering quoting, scheduling, customer follow-up, and admin work.",
       },
     ],
   },

@@ -46,7 +46,7 @@ export default function DeadlockLabsPage() {
   const grouped = Object.entries(categoryMeta).map(([title, meta]) => ({
     title,
     description: meta.description,
-    explorations: ideas.filter((idea) => idea.category === title)
+    explorations: ideas.filter((idea) => idea.category === title).sort((a, b) => String(a.title).localeCompare(String(b.title)))
   })).filter((g) => g.explorations.length > 0);
 
   return (
