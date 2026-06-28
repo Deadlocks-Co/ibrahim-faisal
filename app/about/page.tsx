@@ -59,7 +59,7 @@ export default async function AboutPage() {
         <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
           Powered with
         </p>
-        <TechTags />
+        <TechTags filterRows={[0]} large />
       </div>
     </main>
   );
