@@ -74,15 +74,27 @@ export default function FeedPage() {
 
                   {post.type === "image" && post.image && (
                     <>
-                      <div className="overflow-hidden rounded-xl border">
-                        <Image
-                          src={post.image}
-                          alt={post.content || "Feed image"}
-                          width={800}
-                          height={500}
-                          className="w-full object-cover"
-                        />
-                      </div>
+                      {post.url ? (
+                        <a href={post.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-xl border transition hover:opacity-90">
+                          <Image
+                            src={post.image}
+                            alt={post.content || "Feed image"}
+                            width={800}
+                            height={500}
+                            className="w-full object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <div className="overflow-hidden rounded-xl border">
+                          <Image
+                            src={post.image}
+                            alt={post.content || "Feed image"}
+                            width={800}
+                            height={500}
+                            className="w-full object-cover"
+                          />
+                        </div>
+                      )}
                       {post.content && (
                         <p className="mt-3 text-sm leading-7 text-muted-foreground">{post.content}</p>
                       )}
