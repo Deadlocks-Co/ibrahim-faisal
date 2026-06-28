@@ -22,28 +22,28 @@ const rows: Tag[][] = [
     { label: "Anthropic",   kind: "img",  slug: "anthropic",  darkInvert: true },
     { label: "OpenAI",      kind: "icon", Icon: BrainCircuit },
     { label: "Kimi",        kind: "img",  slug: "moonshotai", darkInvert: true },
-    { label: "Snowflake",   kind: "img",  slug: "snowflake" },
     { label: "Antigravity", kind: "icon", Icon: Rocket },
+    { label: "Vercel",      kind: "img",  slug: "vercel",     darkInvert: true },
+    { label: "Cloudflare",  kind: "img",  slug: "cloudflare" },
   ],
   [
-    { label: "Azure",      kind: "icon", Icon: Cloud },
-    { label: "AWS",        kind: "icon", Icon: Server },
-    { label: "Python",     kind: "img",  slug: "python" },
-    { label: "SQL",        kind: "icon", Icon: Database },
-    { label: "C#",         kind: "icon", Icon: Code2 },
-    { label: "Automation", kind: "icon", Icon: Cpu },
-    { label: "Vercel",     kind: "img",  slug: "vercel",     darkInvert: true },
-    { label: "Cloudflare", kind: "img",  slug: "cloudflare" },
+    { label: "Azure",     kind: "icon", Icon: Cloud },
+    { label: "AWS",       kind: "icon", Icon: Server },
+    { label: "Python",    kind: "img",  slug: "python" },
+    { label: "SQL",       kind: "icon", Icon: Database },
+    { label: "C#",        kind: "icon", Icon: Code2 },
+    { label: "Snowflake", kind: "img",  slug: "snowflake" },
   ],
   [
     { label: "Social Business", kind: "icon", Icon: Building2 },
     { label: "Sports",          kind: "icon", Icon: Trophy },
     { label: "Photography",     kind: "icon", Icon: Camera },
+    { label: "Automation",      kind: "icon", Icon: Cpu },
   ],
 ];
 
 const CDN = "https://cdn.simpleicons.org";
-const MAX_COLS = 8; // widest row (row 2)
+const MAX_COLS = 6; // widest row (rows 1 and 2)
 
 export function TechTags() {
   return (

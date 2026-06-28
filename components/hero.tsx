@@ -13,7 +13,7 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
   }));
 
   return (
-    <section className="py-28 sm:py-36">
+    <section className="pt-28 pb-20 sm:pt-36">
       <div className="mx-auto max-w-6xl px-6">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           Founder of Deadlock Labs
