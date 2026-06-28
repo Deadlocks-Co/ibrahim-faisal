@@ -1,6 +1,50 @@
-import { ArrowUpRight } from "lucide-react";
+import { type ElementType } from "react";
+import {
+  ArrowUpRight,
+  Database,
+  Braces,
+  Cpu,
+  Building2,
+  GraduationCap,
+  Trophy,
+  Rocket,
+  Camera,
+  Sparkles,
+} from "lucide-react";
 import { LabCarousel } from "@/components/lab-carousel";
 import type { ContentItem } from "@/lib/content";
+
+type ImgTag = { label: string; kind: "img"; src: string };
+type IconTag = { label: string; kind: "icon"; Icon: ElementType };
+type Tag = ImgTag | IconTag;
+
+const si = (slug: string): string =>
+  `https://cdn.simpleicons.org/${slug}/000000`;
+
+const rows: Tag[][] = [
+  [
+    { label: "Anthropic", kind: "img", src: si("anthropic") },
+    { label: "OpenAI",    kind: "img", src: si("openai") },
+    { label: "Kimi",      kind: "icon", Icon: Sparkles },
+    { label: "Snowflake", kind: "img", src: si("snowflake") },
+  ],
+  [
+    { label: "Azure",      kind: "img",  src: si("microsoftazure") },
+    { label: "AWS",        kind: "img",  src: si("amazonaws") },
+    { label: "Python",     kind: "img",  src: si("python") },
+    { label: "SQL",        kind: "icon", Icon: Database },
+    { label: "C#",         kind: "img",  src: si("csharp") },
+    { label: "API",        kind: "icon", Icon: Braces },
+    { label: "Automation", kind: "icon", Icon: Cpu },
+  ],
+  [
+    { label: "Social Business", kind: "icon", Icon: Building2 },
+    { label: "Mentor",          kind: "icon", Icon: GraduationCap },
+    { label: "Sports",          kind: "icon", Icon: Trophy },
+    { label: "Antigravity",     kind: "icon", Icon: Rocket },
+    { label: "Photography",     kind: "icon", Icon: Camera },
+  ],
+];
 
 export function Hero({ labs }: { labs: ContentItem[] }) {
   const carouselLabs = labs.map((l) => ({
@@ -23,8 +67,33 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
           AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
         </p>
-        <div className="mt-4 max-w-2xl text-sm text-muted-foreground">
-          Deadlock Labs · Anthropic · OpenAI · Kimi · Snowflake · Azure · AWS · Python · SQL · C# · API · Automation · Social Business · Mentor · Sports · Antigravity · Photography
+        <div className="mt-4 space-y-2">
+          {rows.map((row, ri) => (
+            <div key={ri} className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              {row.map((tag) => {
+                const Icon = tag.kind === "icon" ? tag.Icon : null;
+                return (
+                  <span
+                    key={tag.label}
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"
+                  >
+                    {tag.kind === "img" ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={tag.src}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 dark:invert"
+                      />
+                    ) : (
+                      Icon && <Icon className="h-3.5 w-3.5" />
+                    )}
+                    {tag.label}
+                  </span>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         <LabCarousel labs={carouselLabs} />
