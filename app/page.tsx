@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, BrainCircuit, FlaskConical, Layers3 } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { WorkbenchPreview } from "@/components/workbench-preview";
-import { PhotoPreview } from "@/components/photo-preview";
+import { OutsidePreview } from "@/components/outside-preview";
 import { getCollection } from "@/lib/content";
 
 const labStats = [
@@ -63,7 +63,7 @@ export default function HomePage() {
       <Hero labs={labs} />
       <DeadlockLabsHomeSection />
       <WorkbenchPreview />
-      <PhotoPreview />
+      <OutsidePreview />
     </main>
   );
 }
