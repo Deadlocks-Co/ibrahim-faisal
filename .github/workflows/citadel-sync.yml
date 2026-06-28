@@ -37,6 +37,9 @@ jobs:
           CITADEL_ROOT: ${{ github.workspace }}/citadel
           SITE_ROOT: ${{ github.workspace }}/site
 
+      - name: Pull latest before committing
+        run: git -C site pull --rebase origin main
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           repository: site
