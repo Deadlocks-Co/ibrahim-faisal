@@ -111,8 +111,19 @@ def sync_technical_pub(pub_dir: Path, slug: str) -> bool:
     meta, body = parse_frontmatter(text)
 
     title = meta.get("title") or manifest_data.get("title", slug)
-    date = str(meta.get("publication-date") or meta.get("date") or manifest_data.get("publication_date", ""))
+    date = str(
+        meta.get("publication-date")
+        or meta.get("date")
+        or manifest_data.get("date")
+        or manifest_data.get("publication_date", "")
+    )
     tags = meta.get("tags") or manifest_data.get("tags", [])
+
+    # Strip leading H1 if it duplicates the title (Scratch Pad renders title separately)
+    body_lines = body.splitlines()
+    if body_lines and body_lines[0].strip() == f"# {title}":
+        body = "\n".join(body_lines[1:]).lstrip("\n")
+
     summary = extract_summary(body)
 
     dest = NOTES_DIR / f"{slug}.mdx"
