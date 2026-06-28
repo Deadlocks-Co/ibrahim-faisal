@@ -13,18 +13,18 @@ jobs:
 
     steps:
       - name: Checkout site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           path: site
 
       - name: Checkout citadel
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           repository: Deadlocks-Co/the-citadel
           token: ${{ secrets.CITADEL_PAT }}
           path: citadel
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5.3.0
         with:
           python-version: '3.12'
 
