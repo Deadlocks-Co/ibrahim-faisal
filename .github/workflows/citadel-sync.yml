@@ -1,0 +1,44 @@
+name: Citadel Sync
+
+on:
+  schedule:
+    - cron: '20 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+        with:
+          path: site
+
+      - name: Checkout citadel
+        uses: actions/checkout@v4
+        with:
+          repository: Deadlocks-Co/the-citadel
+          token: ${{ secrets.CITADEL_PAT }}
+          path: citadel
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run Citadel sync
+        run: python site/scripts/citadel_sync.py
+        env:
+          CITADEL_ROOT: ${{ github.workspace }}/citadel
+          SITE_ROOT: ${{ github.workspace }}/site
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          repository: site
+          commit_message: 'content(citadel-sync): auto-publish new articles from The Citadel'
+          file_pattern: 'content/notes/** content/citadel-manifest.json'
