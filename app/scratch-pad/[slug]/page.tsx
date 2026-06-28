@@ -17,11 +17,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const note = getItem("notes", slug);
-  if (!note) return { title: "Lab Notes — Ibrahim Faisal" };
+  if (!note) return { title: "Scratch Pad — Ibrahim Faisal" };
   return buildMetadata({
     title: `${String(note.title)} — Ibrahim Faisal`,
     description: String(note.summary),
-    url: `/lab-notes/${slug}`,
+    url: `/scratch-pad/${slug}`,
   });
 }
 
@@ -35,7 +35,7 @@ export default async function LabNoteDetailPage({ params }: { params: Promise<{ 
   const updated = note.updated != null ? String(note.updated) : null;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ibrahimfaisal.com";
-  const pageUrl = `${siteUrl}/lab-notes/${slug}`;
+  const pageUrl = `${siteUrl}/scratch-pad/${slug}`;
   const shareText = note.shareText != null ? String(note.shareText) : undefined;
   const thumbnail = note.thumbnail != null ? String(note.thumbnail) : null;
 

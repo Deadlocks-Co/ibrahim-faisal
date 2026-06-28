@@ -5,7 +5,7 @@ import { getCollection } from "@/lib/content";
 import { WorkbenchNav } from "@/components/workbench-nav";
 
 export const metadata = buildMetadata({
-  title: "Lab Notes — Ibrahim Faisal",
+  title: "Scratch Pad — Ibrahim Faisal",
   description: "Observations, decisions, and thinking from inside the work.",
   url: "/workbench/notes"
 });
@@ -19,7 +19,7 @@ export default function WorkbenchNotesPage() {
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="max-w-2xl">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">Lab Notes</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Scratch Pad</p>
           <h2 className="mt-3 text-3xl font-light tracking-tight">Observations from inside the work.</h2>
           <p className="mt-4 text-sm leading-7 text-muted-foreground">
             Not polished essays — notes. Decisions made, patterns spotted, things worth writing down.
@@ -32,7 +32,7 @@ export default function WorkbenchNotesPage() {
             return (
               <Link
                 key={note.slug}
-                href={`/lab-notes/${note.slug}`}
+                href={`/scratch-pad/${note.slug}`}
                 className="group flex gap-5 border-b border-border/50 py-5 hover:border-border"
               >
                 {thumbnail && (

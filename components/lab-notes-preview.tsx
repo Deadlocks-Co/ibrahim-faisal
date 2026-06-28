@@ -13,14 +13,14 @@ export function LabNotesPreview() {
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
-              <BookOpen className="h-3.5 w-3.5" /> Lab Notes
+              <BookOpen className="h-3.5 w-3.5" /> Scratch Pad
             </div>
             <h2 className="text-2xl font-light tracking-tight">Notes from the work</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
               Observations, decisions, and thinking written while building. Not polished essays — notes.
             </p>
           </div>
-          <Link href="/lab-notes" className="group flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <Link href="/scratch-pad" className="group flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
             All notes
             <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -30,7 +30,7 @@ export function LabNotesPreview() {
           {notes.map((note) => (
             <Link
               key={note.slug}
-              href={`/lab-notes/${note.slug}`}
+              href={`/scratch-pad/${note.slug}`}
               className="group flex flex-col gap-1 border-b border-border/50 py-4 hover:border-border"
             >
               <div className="flex items-start justify-between gap-6">

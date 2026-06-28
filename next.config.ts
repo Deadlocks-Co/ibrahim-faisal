@@ -43,12 +43,17 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/writing",
-        destination: "/lab-notes",
+        destination: "/scratch-pad",
         permanent: true
       },
       {
         source: "/lab-notes",
-        destination: "/workbench/notes",
+        destination: "/scratch-pad",
+        permanent: true
+      },
+      {
+        source: "/lab-notes/:slug",
+        destination: "/scratch-pad/:slug",
         permanent: true
       },
       {

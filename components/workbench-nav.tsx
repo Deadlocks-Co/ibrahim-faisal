@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const workbenchLinks = [
   { label: "Build", href: "/workbench" },
-  { label: "Lab Notes", href: "/workbench/notes" },
+  { label: "Scratch Pad", href: "/workbench/notes" },
 ];
 
 type WorkbenchNavProps = {
