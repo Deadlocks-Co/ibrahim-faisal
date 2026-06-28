@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Camera, Clapperboard, MapPin, Tv2 } from "lucide-react";
+import { ArrowUpRight, Camera, Clapperboard, MapPin, Radio, Tv2 } from "lucide-react";
 
 const sections = [
   {
@@ -19,6 +19,12 @@ const sections = [
     icon: MapPin,
     label: "Travelogue",
     description: "Places, journeys, and what they leave behind.",
+  },
+  {
+    href: "/outside/feed",
+    icon: Radio,
+    label: "Feed",
+    description: "Screenshots, links, one-liners, and whatever's on my mind. No curation.",
   },
 ];
 
@@ -42,7 +48,7 @@ export function OutsidePreview() {
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {sections.map(({ href, icon: Icon, label, description }) => (
             <Link key={href} href={href} className="rounded-xl border p-6 transition hover:bg-muted/40">
               <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">

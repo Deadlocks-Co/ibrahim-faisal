@@ -4,16 +4,18 @@ const outsideLinks = [
   { label: "Photography", href: "/outside" },
   { label: "Travelogue", href: "/outside/travelogue" },
   { label: "Pop Culture", href: "/outside/culture" },
+  { label: "Feed", href: "/outside/feed" },
 ];
 
 type OutsideNavProps = {
-  active: "photography" | "travelogue" | "culture";
+  active: "photography" | "travelogue" | "culture" | "feed";
 };
 
 const activeByHref: Record<OutsideNavProps["active"], string> = {
   photography: "/outside",
   travelogue: "/outside/travelogue",
   culture: "/outside/culture",
+  feed: "/outside/feed",
 };
 
 export function OutsideNav({ active }: OutsideNavProps) {
