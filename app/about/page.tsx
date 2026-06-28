@@ -34,7 +34,6 @@ export default async function AboutPage() {
             {tagline}
           </p>
         )}
-        <TechTags />
       </header>
 
       <div className="grid gap-12 lg:grid-cols-[1fr_240px]">
@@ -53,8 +52,14 @@ export default async function AboutPage() {
               </ul>
             </div>
           )}
-
         </aside>
+      </div>
+
+      <div className="mt-20 border-t pt-10">
+        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          Powered with
+        </p>
+        <TechTags />
       </div>
     </main>
   );

@@ -19,14 +19,15 @@ type IconTag = { label: string; kind: "icon"; Icon: ElementType };
 type Tag = ImgTag | IconTag;
 
 const si = (slug: string): string =>
-  `https://cdn.simpleicons.org/${slug}/000000`;
+  `https://cdn.simpleicons.org/${slug}`;
 
 const rows: Tag[][] = [
   [
-    { label: "Anthropic", kind: "img",  src: si("anthropic") },
-    { label: "OpenAI",    kind: "icon", Icon: BrainCircuit },
-    { label: "Kimi",      kind: "img",  src: si("moonshotai") },
-    { label: "Snowflake", kind: "img",  src: si("snowflake") },
+    { label: "Anthropic",   kind: "img",  src: si("anthropic") },
+    { label: "OpenAI",      kind: "icon", Icon: BrainCircuit },
+    { label: "Kimi",        kind: "img",  src: si("moonshotai") },
+    { label: "Snowflake",   kind: "img",  src: si("snowflake") },
+    { label: "Antigravity", kind: "icon", Icon: Rocket },
   ],
   [
     { label: "Azure",      kind: "icon", Icon: Cloud },
@@ -41,22 +42,21 @@ const rows: Tag[][] = [
     { label: "Social Business", kind: "icon", Icon: Building2 },
     { label: "Mentor",          kind: "icon", Icon: GraduationCap },
     { label: "Sports",          kind: "icon", Icon: Trophy },
-    { label: "Antigravity",     kind: "icon", Icon: Rocket },
     { label: "Photography",     kind: "icon", Icon: Camera },
   ],
 ];
 
 export function TechTags() {
   return (
-    <div className="mt-4 space-y-2">
+    <div className="mt-4 space-y-3">
       {rows.map((row, ri) => (
-        <div key={ri} className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+        <div key={ri} className="flex flex-wrap items-center gap-x-6 gap-y-2">
           {row.map((tag) => {
             const Icon = tag.kind === "icon" ? tag.Icon : null;
             return (
               <span
                 key={tag.label}
-                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"
+                className="inline-flex items-center gap-2 text-xs text-muted-foreground"
               >
                 {tag.kind === "img" ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -64,10 +64,10 @@ export function TechTags() {
                     src={tag.src}
                     alt=""
                     aria-hidden="true"
-                    className="h-3.5 w-3.5 dark:invert"
+                    className="h-4 w-4"
                   />
                 ) : (
-                  Icon && <Icon className="h-3.5 w-3.5" />
+                  Icon && <Icon className="h-4 w-4" />
                 )}
                 {tag.label}
               </span>
