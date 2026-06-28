@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getItem } from "@/lib/content";
+import { TechTags } from "@/components/tech-tags";
 
 const mdxOptions = { remarkPlugins: [remarkGfm] };
 
@@ -33,6 +34,7 @@ export default async function AboutPage() {
             {tagline}
           </p>
         )}
+        <TechTags />
       </header>
 
       <div className="grid gap-12 lg:grid-cols-[1fr_240px]">
