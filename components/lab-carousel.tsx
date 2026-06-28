@@ -62,8 +62,10 @@ export function LabCarousel({ labs }: { labs: LabItem[] }) {
 
   return (
     <div className="mt-10 max-w-2xl">
-      <div className="rounded-2xl border bg-muted/20 p-6">
+      <div className="relative h-52 rounded-2xl border bg-muted/20 p-6">
+        {/* Content */}
         <div
+          className="absolute inset-0 p-6 pb-12"
           style={{
             opacity: visible ? 1 : 0,
             transition: "opacity 350ms ease",
@@ -77,45 +79,45 @@ export function LabCarousel({ labs }: { labs: LabItem[] }) {
           <h3 className="mt-4 text-xl font-light tracking-tight">
             {current.title}
           </h3>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-2">
             {current.framing}
           </p>
 
           <Link
             href={`/deadlock-labs/${current.slug}`}
-            className="mt-5 inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
+            className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
           >
             Read idea <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        {/* Progress bar */}
-        <div className="mt-5 h-px w-full overflow-hidden rounded-full bg-border">
-          <div
-            key={progressKey}
-            className="h-full bg-foreground/40"
-            style={{
-              width: "100%",
-              transformOrigin: "left",
-              animation: `labprogress ${DURATION}ms linear forwards`,
-            }}
-          />
-        </div>
-
-        {/* Dots */}
-        <div className="mt-3 flex gap-1.5">
-          {items.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Show ${items[i].title}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index
-                  ? "w-4 bg-foreground"
-                  : "w-1.5 bg-foreground/20 hover:bg-foreground/40"
-              }`}
+        {/* Progress bar + dots — pinned to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 px-6 pb-4">
+          <div className="h-px w-full overflow-hidden rounded-full bg-border">
+            <div
+              key={progressKey}
+              className="h-full bg-foreground/40"
+              style={{
+                width: "100%",
+                transformOrigin: "left",
+                animation: `labprogress ${DURATION}ms linear forwards`,
+              }}
             />
-          ))}
+          </div>
+          <div className="mt-2.5 flex gap-1.5">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                aria-label={`Show ${items[i].title}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === index
+                    ? "w-4 bg-foreground"
+                    : "w-1.5 bg-foreground/20 hover:bg-foreground/40"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
