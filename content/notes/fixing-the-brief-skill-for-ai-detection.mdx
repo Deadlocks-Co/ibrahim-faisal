@@ -1,0 +1,103 @@
+---
+title: Fixing the /brief Skill for AI Detection
+slug: fixing-the-brief-skill-for-ai-detection
+summary: '"We failed the job. Right?"'
+published: ''
+updated: ''
+tags:
+- ai-detection
+- brief-skill
+- writer-skill
+- prompt-engineering
+- citadel
+- voice
+draft: false
+shareText: ''
+---
+
+# Fixing the /brief Skill for AI Detection
+
+"We failed the job. Right?"
+
+That was the opening. I had just run the previous lab note — the one about run-scoped file naming and observatory automation — through QuillBot and ZeroGPT. Both came back at 95% AI-generated. Not borderline. Not a quirky edge case. The same answer from two independent tools.
+
+The content was accurate. The structure was the problem.
+
+---
+
+## What the Detectors Actually Saw
+
+I read the article again alongside a plain-language description of what AI detectors measure: perplexity, burstiness, structural predictability, sentence cadence. Once I knew what to look for, the failures were obvious. Four symmetrical sections of nearly equal length. A Takeaway section at the end. A bullet list of changed files that read like a commit message that had wandered into prose. Not a single sentence in first person.
+
+The `/brief` skill produced the raw material. The writer agent turned it into documentation. Neither had any mechanism to prevent that — the brief told the writer what happened, and the writer made it clean. Clean is exactly the wrong thing. Structured, symmetrical output is what detectors are trained to catch, because that's what most AI output looks like.
+
+The framing that made the diagnosis concrete: a human writing a lab note for themselves doesn't name a section "Takeaway." That's an artifact of summarization. It signals the writer is packaging content for a reader who won't read carefully — the opposite of what a lab note is.
+
+---
+
+## The Interrupted Write
+
+My first instinct was to write a better brief for that session and move on. I started the write. The user stopped it mid-stream and redirected: fix the skill, not the content.
+
+That mattered more than it seemed. Writing one better brief would have produced one better article. Fixing `~/.claude/commands/brief.md` changes what every future brief contains — including this one. The target shifted from output to process. That's the right level to work at when the failure is structural.
+
+I could have pushed back. The broken article already existed; fixing the brief wouldn't retroactively change it. But that argument would have missed the point. The user wasn't asking me to repair the old article. They were asking me to stop producing the same kind of article again.
+
+---
+
+## Two Additions That Did the Work
+
+The fix was a prompt engineering problem, not a pipeline architecture problem. I didn't touch the pipeline. I changed the brief template.
+
+Two additions drove most of the change.
+
+First: a `## Raw Session Moments` section. The brief now requires 2–4 unpolished anchor points — something the user said verbatim, a decision that went wrong first, a constraint that appeared unexpectedly and mattered. Without concrete anchors, the writer agent has nothing real to work from. It synthesizes clean narrative from scratch, because synthesis is what it defaults to when the input is abstract. The session moments give it something specific. Specificity is harder to sand smooth.
+
+Second: a `## Voice and Structure Rules` section with seven hard constraints. First person required — if there's no "I" in the draft, reject it. No Takeaway section. Deliberate sentence length variation. One paragraph must contain genuine uncertainty or a wrong turn. Structural sections must be uneven. The old `## Tone` and `## Constraints` sections were removed. They were decorative. A rule that says "write in a conversational tone" does nothing. A rule that says "if there is no 'I' in the draft, reject it" is enforceable.
+
+The `## What` section got relabelled "reference only — do not reproduce as a section." One label change. That's probably what kills the changelog-as-article-section pattern, because the pattern exists partly because the brief presented the file list as something the writer could lift directly.
+
+```mermaid
+flowchart LR
+    subgraph before["Before"]
+        direction TB
+        B1["## Document Type"]
+        B2["## Audience"]
+        B3["## Why"]
+        B4["## How"]
+        B5["## What"]
+        B6["## Tone"]
+        B7["## Constraints"]
+        B8["## Target Platform"]
+        B9["## Tags"]
+    end
+
+    subgraph after["After"]
+        direction TB
+        A1["## Document Type"]
+        A2["## Audience"]
+        A3["## Why"]
+        A4["## How"]
+        A5["## What (reference only —\ndo not reproduce as a section)"]
+        A6["## Raw Session Moments"]
+        A7["## Voice and Structure Rules"]
+        A8["## Target Platform"]
+        A9["## Tags"]
+    end
+
+    B6 -. removed .-> X1[" "]
+    B7 -. removed .-> X1
+    B5 -. relabelled .-> A5
+    X1 -. replaced by .-> A6
+    X1 -. replaced by .-> A7
+```
+
+*The two decorative sections were removed and replaced with concrete enforcement: one section anchors real session moments, the other encodes hard voice rules the writer agent must honour.*
+
+---
+
+## What I Don't Know Yet
+
+Whether this holds. I fixed the brief template. This article is the first output produced under the new rules. If it comes back at 95% AI again, the problem is deeper than prompt structure — it's in sentence-level generation patterns that voice rules can't reach. I haven't run this draft through either detector yet. That's the next step, and I'm not confident about the result.
+
+The burstiness problem is harder than the structural one. Short sentences next to long ones is a rule I can write down. Whether the writer agent actually produces that cadence, or whether it produces sentences that vary in length while remaining syntactically uniform — that I don't know until I see the score.
