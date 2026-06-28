@@ -1,0 +1,23 @@
+---
+title: The Citadel
+slug: the-citadel
+summary: A monorepo of independent agent pipelines — each called a House — with strict isolation between workflows, model routing, and review schemas.
+framing: Testing what it looks like when agent pipelines are fully isolated from each other by convention, not code.
+category: AI Systems
+status: Testing in Labs
+icon: BrainCircuit
+published: "2026-06-27"
+updated: "2026-06-28"
+url: "https://the-citadel-three.vercel.app/"
+draft: false
+tags:
+  - agent-architecture
+  - llm-gateway
+  - multi-agent
+problem: Shared state between agent pipelines is where configuration drift starts. If two Houses share a schema, one pipeline's evolution silently breaks the other's contract.
+exploration: Each House owns its own agents, model-routing config, content directory, and review schema. A house-template provides the canonical starting point — copy, rename, wire the models, write the agents.
+audience: AI engineers and teams running multiple independent agent workflows from a single codebase.
+model: Internal tooling and infrastructure layer. Not a product yet — validating whether the House isolation pattern holds as pipelines evolve independently.
+risks: Convention-based isolation is only as strong as the discipline to enforce it. Drift risk rises as the number of Houses grows without structural enforcement.
+notes: The pattern is holding better than expected. Duplication between Houses is turning out to be cheaper than coupling. The active question is whether the model-routing abstraction scales cleanly when roles multiply across Houses.
+---
