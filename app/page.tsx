@@ -3,15 +3,16 @@ import { ArrowUpRight, BrainCircuit, FlaskConical, Layers3 } from "lucide-react"
 import { Hero } from "@/components/hero";
 import { WorkbenchPreview } from "@/components/workbench-preview";
 import { OutsidePreview } from "@/components/outside-preview";
+import { ScratchPadPreview } from "@/components/scratch-pad-preview";
 import { getCollection } from "@/lib/content";
 
-const labStats = [
-  { label: "Exploration lanes", value: "3" },
-  { label: "Active ideas", value: "5" },
-  { label: "Build mode", value: "Prototype first" },
-];
+function DeadlockLabsHomeSection({ activeCount }: { activeCount: number }) {
+  const labStats = [
+    { label: "Exploration lanes", value: "3" },
+    { label: "Active ideas", value: String(activeCount) },
+    { label: "Build mode", value: "Prototype first" },
+  ];
 
-function DeadlockLabsHomeSection() {
   return (
     <section className="border-t py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -61,7 +62,8 @@ export default function HomePage() {
   return (
     <main>
       <Hero labs={labs} />
-      <DeadlockLabsHomeSection />
+      <ScratchPadPreview />
+      <DeadlockLabsHomeSection activeCount={labs.length} />
       <WorkbenchPreview />
       <OutsidePreview />
     </main>

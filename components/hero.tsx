@@ -1,7 +1,15 @@
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, ExternalLink, Link2, MessageSquare, Radio } from "lucide-react";
 import { LabCarousel } from "@/components/lab-carousel";
 import { TechTags } from "@/components/tech-tags";
 import type { ContentItem } from "@/lib/content";
+import { feedPosts } from "@/content/feed";
+
+const typeIcon = {
+  text: MessageSquare,
+  link: Link2,
+  image: MessageSquare,
+};
 
 export function Hero({ labs }: { labs: ContentItem[] }) {
   const carouselLabs = labs.map((l) => ({
@@ -12,35 +20,95 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
     category: String(l.category),
   }));
 
+  const recentPosts = [...feedPosts].reverse().slice(0, 4);
+
   return (
     <section className="pt-28 pb-20 sm:pt-36">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Founder of Deadlock Labs
-        </p>
-        <h1 className="mt-5 text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-          Ibrahim F<span className="text-violet-500">ai</span>sal
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-          AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
-        </p>
-        <TechTags />
+        <div className="grid gap-12 lg:grid-cols-[1fr_300px] lg:items-stretch">
+          {/* Left: main hero content */}
+          <div>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              Founder of Deadlock Labs
+            </p>
+            <h1 className="mt-5 text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
+              Ibrahim F<span className="text-violet-500">ai</span>sal
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+              AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
+            </p>
+            <TechTags />
 
-        <LabCarousel labs={carouselLabs} />
+            <LabCarousel labs={carouselLabs} />
 
-        <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
-          <a
-            href="/deadlock-labs"
-            className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition hover:bg-foreground/5"
-          >
-            Explore Deadlock Labs <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
-          <a
-            href="/workbench"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
-          >
-            View Workbench <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+              <a
+                href="/deadlock-labs"
+                className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition hover:bg-foreground/5"
+              >
+                Explore Deadlock Labs <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+              <a
+                href="/workbench"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
+              >
+                View Workbench <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Right: Shredder mini-feed */}
+          <div className="hidden lg:flex lg:flex-col">
+            <div className="flex h-full flex-col rounded-xl border p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+                  <Radio className="h-3.5 w-3.5" />
+                  Shredder
+                </div>
+                <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">Unfiltered</span>
+              </div>
+
+              {recentPosts.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nothing here yet.</p>
+              ) : (
+                <div className="space-y-px">
+                  {recentPosts.map((post) => {
+                    const Icon = typeIcon[post.type];
+                    return (
+                      <div key={post.id} className="border-b border-border/50 py-3.5 last:border-b-0">
+                        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+                          <Icon className="h-3 w-3" />
+                          <span>{post.date}</span>
+                        </div>
+                        {post.content && (
+                          <p className="line-clamp-2 text-sm leading-6">{post.content}</p>
+                        )}
+                        {post.type === "link" && post.url && (
+                          <a
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            {post.linkTitle || post.url}
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <Link
+                href="/outside/feed"
+                className="mt-auto pt-4 flex items-center gap-1 text-xs text-muted-foreground transition hover:text-foreground"
+              >
+                Show full timeline
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
