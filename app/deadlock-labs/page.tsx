@@ -117,20 +117,50 @@ export default function DeadlockLabsPage() {
                 {category.explorations.map((exploration) => {
                   const Icon = iconMap[String(exploration.icon)] ?? BrainCircuit;
                   const status = String(exploration.status);
+                  const isCitadel = String(exploration.cardTheme ?? "") === "citadel";
 
                   return (
-                    <Link key={exploration.slug} href={`/deadlock-labs/${exploration.slug}`} className="group rounded-2xl border bg-background p-5 transition hover:bg-muted/40">
+                    <Link
+                      key={exploration.slug}
+                      href={`/deadlock-labs/${exploration.slug}`}
+                      className={`group rounded-2xl border p-5 transition ${isCitadel ? "" : "bg-background hover:bg-muted/40"}`}
+                      style={isCitadel ? { backgroundColor: "#09090e", borderColor: "#c9a96e" } : undefined}
+                    >
                       <div className="flex items-start justify-between gap-4">
-                        <div className="rounded-2xl border bg-muted/40 p-3">
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <span className={`rounded-full border px-3 py-1 text-xs ${statusClass(status)}`}>
+                        {isCitadel ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#131320", borderColor: "#2a2a3a" }}>
+                            <span style={{ color: "#c9a96e", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>⬡</span>
+                          </div>
+                        ) : (
+                          <div className="rounded-2xl border bg-muted/40 p-3">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                        )}
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs ${!isCitadel ? statusClass(status) : ""}`}
+                          style={isCitadel
+                            ? { borderColor: "#c9a96e40", backgroundColor: "#c9a96e12", color: "#c9a96e" }
+                            : undefined}
+                        >
                           {status}
                         </span>
                       </div>
-                      <h4 className="mt-5 text-lg font-medium tracking-tight">{String(exploration.title)}</h4>
-                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{String(exploration.summary)}</p>
-                      <div className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition group-hover:text-foreground">
+                      <h4
+                        className="mt-5 text-lg font-medium tracking-tight"
+                        style={isCitadel ? { color: "#f2ede5", fontFamily: "var(--font-playfair)", fontWeight: 600, letterSpacing: "0.04em" } : undefined}
+                      >
+                        {String(exploration.title)}
+                      </h4>
+                      <p
+                        className="mt-3 text-sm leading-7 text-muted-foreground"
+                        style={isCitadel ? { color: "rgba(242, 237, 229, 0.55)" } : undefined}
+                      >
+                        {String(exploration.summary)}
+                      </p>
+                      <div
+                        className={`mt-5 inline-flex items-center gap-2 text-sm transition ${!isCitadel ? "text-muted-foreground group-hover:text-foreground" : ""}`}
+                        style={isCitadel ? { color: "rgba(242, 237, 229, 0.4)" } : undefined}
+                      >
                         Read idea <ArrowUpRight className="h-4 w-4" />
                       </div>
                     </Link>

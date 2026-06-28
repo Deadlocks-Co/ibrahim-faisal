@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Syne } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Syne } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 const syne = Syne({ subsets: ["latin"], variable: "--font-syne", weight: ["700", "800"] });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", weight: ["600"] });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.variable} ${geistMono.variable} ${syne.variable} min-h-screen bg-background font-sans text-foreground`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${syne.variable} ${playfair.variable} min-h-screen bg-background font-sans text-foreground`}>
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
