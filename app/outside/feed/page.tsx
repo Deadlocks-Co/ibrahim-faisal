@@ -98,6 +98,17 @@ export default function FeedPage() {
                       {post.content && (
                         <p className="mt-3 text-sm leading-7 text-muted-foreground">{post.content}</p>
                       )}
+                      {post.url && post.linkTitle && (
+                        <a
+                          href={post.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          {post.linkTitle}
+                        </a>
+                      )}
                     </>
                   )}
                 </article>
