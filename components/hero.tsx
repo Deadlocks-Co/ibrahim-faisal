@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, ExternalLink, Link2, MessageSquare, Radio } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, ExternalLink, Image as ImageIcon, Link2, MessageSquare, Radio } from "lucide-react";
 import { LabCarousel } from "@/components/lab-carousel";
 import { TechTags } from "@/components/tech-tags";
 import type { ContentItem } from "@/lib/content";
@@ -8,7 +9,7 @@ import { feedPosts } from "@/content/feed";
 const typeIcon = {
   text: MessageSquare,
   link: Link2,
-  image: MessageSquare,
+  image: ImageIcon,
 };
 
 export function Hero({ labs }: { labs: ContentItem[] }) {
@@ -82,6 +83,33 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
                         </div>
                         {post.content && (
                           <p className="line-clamp-2 text-sm leading-6">{post.content}</p>
+                        )}
+                        {post.type === "image" && post.image && (
+                          <a
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 block overflow-hidden rounded-lg border transition hover:opacity-90"
+                          >
+                            <Image
+                              src={post.image}
+                              alt={post.content || "Shredder image"}
+                              width={300}
+                              height={180}
+                              className="w-full object-cover"
+                            />
+                          </a>
+                        )}
+                        {post.type === "image" && post.url && post.linkTitle && (
+                          <a
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            {post.linkTitle}
+                          </a>
                         )}
                         {post.type === "link" && post.url && (
                           <a
