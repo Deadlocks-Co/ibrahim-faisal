@@ -23,7 +23,7 @@ const sections = [
   {
     href: "/outside/feed",
     icon: Radio,
-    label: "Feed",
+    label: "Shredder",
     description: "Screenshots, links, one-liners, and whatever's on my mind. No curation.",
   },
 ];

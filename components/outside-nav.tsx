@@ -4,7 +4,7 @@ const outsideLinks = [
   { label: "Photography", href: "/outside" },
   { label: "Travelogue", href: "/outside/travelogue" },
   { label: "Pop Culture", href: "/outside/culture" },
-  { label: "Feed", href: "/outside/feed" },
+  { label: "Shredder", href: "/outside/feed" },
 ];
 
 type OutsideNavProps = {

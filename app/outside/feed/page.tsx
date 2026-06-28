@@ -5,7 +5,7 @@ import Image from "next/image";
 import { feedPosts } from "@/content/feed";
 
 export const metadata = buildMetadata({
-  title: "Feed — Ibrahim Faisal",
+  title: "Shredder — Ibrahim Faisal",
   description: "Screenshots, one-liners, links, and whatever's on my mind.",
   url: "/outside/feed"
 });
