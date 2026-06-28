@@ -9,7 +9,10 @@ import {
   Trophy,
   Rocket,
   Camera,
-  Sparkles,
+  BrainCircuit,
+  Cloud,
+  Server,
+  Code2,
 } from "lucide-react";
 import { LabCarousel } from "@/components/lab-carousel";
 import type { ContentItem } from "@/lib/content";
@@ -23,17 +26,17 @@ const si = (slug: string): string =>
 
 const rows: Tag[][] = [
   [
-    { label: "Anthropic", kind: "img", src: si("anthropic") },
-    { label: "OpenAI",    kind: "img", src: si("openai") },
-    { label: "Kimi",      kind: "icon", Icon: Sparkles },
-    { label: "Snowflake", kind: "img", src: si("snowflake") },
+    { label: "Anthropic", kind: "img",  src: si("anthropic") },
+    { label: "OpenAI",    kind: "icon", Icon: BrainCircuit },
+    { label: "Kimi",      kind: "img",  src: si("moonshotai") },
+    { label: "Snowflake", kind: "img",  src: si("snowflake") },
   ],
   [
-    { label: "Azure",      kind: "img",  src: si("microsoftazure") },
-    { label: "AWS",        kind: "img",  src: si("amazonaws") },
+    { label: "Azure",      kind: "icon", Icon: Cloud },
+    { label: "AWS",        kind: "icon", Icon: Server },
     { label: "Python",     kind: "img",  src: si("python") },
     { label: "SQL",        kind: "icon", Icon: Database },
-    { label: "C#",         kind: "img",  src: si("csharp") },
+    { label: "C#",         kind: "icon", Icon: Code2 },
     { label: "API",        kind: "icon", Icon: Braces },
     { label: "Automation", kind: "icon", Icon: Cpu },
   ],
