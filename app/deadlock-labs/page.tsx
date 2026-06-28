@@ -22,7 +22,7 @@ const categoryMeta: Record<string, { description: string }> = {
 
 const metrics = [
   { label: "Exploration lanes", value: "3" },
-  { label: "Active ideas", value: "5" },
+  { label: "Active ideas", value: "6" },
   { label: "Core themes", value: "AI + Data" },
   { label: "Build mode", value: "Prototype first" }
 ];

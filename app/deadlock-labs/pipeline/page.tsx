@@ -9,17 +9,17 @@ const stages = [
   {
     name: "Researching",
     description: "The idea is being tested through notes, specs, market reading, and conversations.",
-    items: []
+    items: ["Bangla Translator", "Gallery Side", "World Cup Quiz Battle"]
   },
   {
     name: "Prototype",
     description: "There is enough conviction to build a working version or realistic demo.",
-    items: ["Bangla Translator", "World Cup Quiz Battle"]
+    items: []
   },
   {
     name: "Testing",
     description: "The prototype is ready for feedback from friends, colleagues, builders, or target users.",
-    items: []
+    items: ["The Citadel"]
   },
   {
     name: "Building",

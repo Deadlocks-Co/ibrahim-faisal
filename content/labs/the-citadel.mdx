@@ -1,10 +1,10 @@
 ---
 title: The Citadel
 slug: the-citadel
-summary: A monorepo of independent agent pipelines — each called a House — with strict isolation between workflows, model routing, and review schemas.
-framing: Testing what it looks like when agent pipelines are fully isolated from each other by convention, not code.
+summary: An AI specialist team framework that organises agent work into Houses — self-contained units where each domain has its own agents, review gates, and model routing.
+framing: What if every domain of AI work had its own specialist team — with its own review criteria, model routing, and quality threshold — instead of one generalist model handling everything?
 category: AI Systems
-status: Testing in Labs
+status: Testing
 icon: BrainCircuit
 published: "2026-06-27"
 updated: "2026-06-28"
@@ -14,10 +14,10 @@ tags:
   - agent-architecture
   - llm-gateway
   - multi-agent
-problem: Shared state between agent pipelines is where configuration drift starts. If two Houses share a schema, one pipeline's evolution silently breaks the other's contract.
-exploration: Each House owns its own agents, model-routing config, content directory, and review schema. A house-template provides the canonical starting point — copy, rename, wire the models, write the agents.
-audience: AI engineers and teams running multiple independent agent workflows from a single codebase.
-model: Internal tooling and infrastructure layer. Not a product yet — validating whether the House isolation pattern holds as pipelines evolve independently.
-risks: Convention-based isolation is only as strong as the discipline to enforce it. Drift risk rises as the number of Houses grows without structural enforcement.
-notes: The pattern is holding better than expected. Duplication between Houses is turning out to be cheaper than coupling. The active question is whether the model-routing abstraction scales cleanly when roles multiply across Houses.
+problem: Generalist models handle every task with the same approach. Different domains need different review criteria, different model choices, and different quality bars. Sharing configuration between pipelines causes drift — one House's evolution silently breaks another's contract.
+exploration: Each House is a self-contained directory owning its agents, model-routing config, and review schema. All models route through a single LLM gateway configured once in settings, not per agent. Review gates enforce a 0.80 confidence score threshold; work below it routes back to the responsible agent, up to three revision cycles. File-based auditing makes every pipeline step inspectable. Currently running House of Technical Publication and House of Personal Writing.
+audience: AI engineers and teams running multiple independent agent workflows from a single codebase who need domain-specific quality enforcement without shared-state coupling.
+model: Internal framework and infrastructure layer. Not a product yet — validating whether the House isolation pattern and review gate mechanism hold as the number of Houses grows.
+risks: Convention-based isolation only holds if discipline to enforce it holds. Drift risk rises as Houses multiply. The 0.80 review threshold needs tuning per domain — a single threshold may be too coarse across very different output types.
+notes: The House pattern is holding better than expected in testing. Specialist-over-generalist is showing real benefit in review quality. The active question is whether the gateway routing abstraction scales cleanly when agent roles multiply across Houses with very different domain requirements.
 ---
