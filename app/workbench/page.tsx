@@ -5,10 +5,10 @@ import { getCollection } from "@/lib/content";
 import { WorkbenchNav } from "@/components/workbench-nav";
 
 const metrics = [
-  { label: "Active builds", value: "5" },
+  { label: "Active builds", value: "6" },
   { label: "Build mode", value: "Ship first" },
   { label: "Primary stack", value: "AI + Data" },
-  { label: "Artefacts", value: "5" },
+  { label: "Artefacts", value: "6" },
 ];
 
 function statusClass(status: string) {

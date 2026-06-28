@@ -1,0 +1,32 @@
+---
+title: Shredder
+slug: shredder
+summary: A self-hosted reverse-chronological feed — screenshots, links, and one-liners synced automatically from Google Drive via GitHub Actions.
+category: Developer Tools
+status: Active
+year: "2026"
+featured: true
+draft: false
+published: "2026-06-28"
+updated: "2026-06-28"
+tags:
+  - personal-publishing
+  - automation
+  - github-actions
+stack:
+  - Python
+  - Google Drive API
+  - GitHub Actions
+  - Next.js
+  - TypeScript
+  - Vercel
+links:
+  - label: Open Shredder
+    href: /outside/feed
+  - label: Build notes
+    href: /scratch-pad/shredder-auto-sync
+purpose: Remove the publishing friction between having a thought and having it live. The goal is zero steps between phone screenshot and deployed post.
+problem: Self-hosted timelines die when the publishing workflow has too many steps. Every friction point between a phone screenshot and a live post is a post that never happens.
+approach: Files dropped into a Google Drive folder are the only required action. A GitHub Actions cron (every 4h, plus manual trigger) lists new files, classifies them by extension into image, link, or text posts, downloads them, appends TypeScript entries to feed.ts, and commits. Vercel picks up the push and deploys automatically. A manifest file handles idempotency — if the script crashes mid-run, the next run retries only unprocessed files.
+learned: Removing yourself from the publishing loop entirely is the only reliable way to keep a personal feed alive. The right interface is the one already open on the phone.
+---
