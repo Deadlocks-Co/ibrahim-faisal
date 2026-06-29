@@ -119,7 +119,9 @@ export default function DeadlockLabsPage() {
                   const status = String(exploration.status);
                   const isCitadel = String(exploration.cardTheme ?? "") === "citadel";
                   const isEvenstar = String(exploration.cardTheme ?? "") === "evenstar";
-                  const isThemed = isCitadel || isEvenstar;
+                  const isBangla = String(exploration.cardTheme ?? "") === "bangla";
+                  const isGallerySide = String(exploration.cardTheme ?? "") === "galleryside";
+                  const isThemed = isCitadel || isEvenstar || isBangla || isGallerySide;
 
                   return (
                     <Link
@@ -128,7 +130,9 @@ export default function DeadlockLabsPage() {
                       className={`group rounded-2xl border p-5 transition ${isThemed ? "" : "bg-background hover:bg-muted/40"}`}
                       style={
                         isCitadel ? { backgroundColor: "#09090e", borderColor: "#c9a96e" }
-                        : isEvenstar ? { backgroundColor: "#0A0D16", borderColor: "#6C63FF40" }
+                        : isEvenstar ? { backgroundColor: "#090D1F", borderColor: "#4B7CF6" }
+                        : isBangla ? { backgroundColor: "#120D0A", borderColor: "#C0392B" }
+                        : isGallerySide ? { backgroundColor: "#030303", borderColor: "#00DDB0" }
                         : undefined
                       }
                     >
@@ -138,8 +142,16 @@ export default function DeadlockLabsPage() {
                             <span style={{ color: "#c9a96e", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>⬡</span>
                           </div>
                         ) : isEvenstar ? (
-                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#111520", borderColor: "#6C63FF30" }}>
-                            <span style={{ color: "#6C63FF", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>★</span>
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#0E1530", borderColor: "#4B7CF630" }}>
+                            <span style={{ color: "#4B7CF6", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>★</span>
+                          </div>
+                        ) : isBangla ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#1E0E0B", borderColor: "#C0392B30" }}>
+                            <span style={{ color: "#C0392B", fontSize: "20px", lineHeight: 1, fontFamily: "serif" }}>অ</span>
+                          </div>
+                        ) : isGallerySide ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#0A0A0A", borderColor: "#00DDB030" }}>
+                            <span style={{ color: "#00DDB0", fontSize: "14px", lineHeight: 1, fontFamily: "monospace", fontWeight: 700, letterSpacing: "0.05em" }}>GS</span>
                           </div>
                         ) : (
                           <div className="rounded-2xl border bg-muted/40 p-3">
@@ -150,7 +162,9 @@ export default function DeadlockLabsPage() {
                           className={`rounded-full border px-3 py-1 text-xs ${!isThemed ? statusClass(status) : ""}`}
                           style={
                             isCitadel ? { borderColor: "#c9a96e40", backgroundColor: "#c9a96e12", color: "#c9a96e" }
-                            : isEvenstar ? { borderColor: "#6C63FF40", backgroundColor: "#6C63FF12", color: "#6C63FF" }
+                            : isEvenstar ? { borderColor: "#4B7CF640", backgroundColor: "#4B7CF612", color: "#4B7CF6" }
+                            : isBangla ? { borderColor: "#C0392B40", backgroundColor: "#C0392B12", color: "#C0392B" }
+                            : isGallerySide ? { borderColor: "#00DDB040", backgroundColor: "#00DDB012", color: "#00DDB0" }
                             : undefined
                           }
                         >
@@ -161,7 +175,9 @@ export default function DeadlockLabsPage() {
                         className="mt-5 text-lg font-medium tracking-tight"
                         style={
                           isCitadel ? { color: "#f2ede5", fontFamily: "var(--font-playfair)", fontWeight: 600, letterSpacing: "0.04em" }
-                          : isEvenstar ? { color: "#F0F2F6", fontWeight: 600, letterSpacing: "0.01em" }
+                          : isEvenstar ? { color: "#E8EEF8", fontWeight: 600, letterSpacing: "0.01em" }
+                          : isBangla ? { color: "#F5EDE8", fontWeight: 600, letterSpacing: "0.01em" }
+                          : isGallerySide ? { color: "#E8FFF8", fontWeight: 700, letterSpacing: "0.02em" }
                           : undefined
                         }
                       >
@@ -171,7 +187,9 @@ export default function DeadlockLabsPage() {
                         className="mt-3 text-sm leading-7 text-muted-foreground"
                         style={
                           isCitadel ? { color: "rgba(242, 237, 229, 0.55)" }
-                          : isEvenstar ? { color: "rgba(240, 242, 246, 0.55)" }
+                          : isEvenstar ? { color: "rgba(232, 238, 248, 0.55)" }
+                          : isBangla ? { color: "rgba(245, 237, 232, 0.55)" }
+                          : isGallerySide ? { color: "rgba(232, 255, 248, 0.55)" }
                           : undefined
                         }
                       >
@@ -181,7 +199,9 @@ export default function DeadlockLabsPage() {
                         className={`mt-5 inline-flex items-center gap-2 text-sm transition ${!isThemed ? "text-muted-foreground group-hover:text-foreground" : ""}`}
                         style={
                           isCitadel ? { color: "rgba(242, 237, 229, 0.4)" }
-                          : isEvenstar ? { color: "rgba(240, 242, 246, 0.4)" }
+                          : isEvenstar ? { color: "rgba(75, 124, 246, 0.5)" }
+                          : isBangla ? { color: "rgba(192, 57, 43, 0.6)" }
+                          : isGallerySide ? { color: "rgba(0, 221, 176, 0.6)" }
                           : undefined
                         }
                       >
