@@ -22,7 +22,7 @@ const categoryMeta: Record<string, { description: string }> = {
 
 const metrics = [
   { label: "Exploration lanes", value: "3" },
-  { label: "Active ideas", value: "6" },
+  { label: "Active ideas", value: "7" },
   { label: "Core themes", value: "AI + Data" },
   { label: "Build mode", value: "Prototype first" }
 ];
@@ -118,18 +118,28 @@ export default function DeadlockLabsPage() {
                   const Icon = iconMap[String(exploration.icon)] ?? BrainCircuit;
                   const status = String(exploration.status);
                   const isCitadel = String(exploration.cardTheme ?? "") === "citadel";
+                  const isEvenstar = String(exploration.cardTheme ?? "") === "evenstar";
+                  const isThemed = isCitadel || isEvenstar;
 
                   return (
                     <Link
                       key={exploration.slug}
                       href={`/deadlock-labs/${exploration.slug}`}
-                      className={`group rounded-2xl border p-5 transition ${isCitadel ? "" : "bg-background hover:bg-muted/40"}`}
-                      style={isCitadel ? { backgroundColor: "#09090e", borderColor: "#c9a96e" } : undefined}
+                      className={`group rounded-2xl border p-5 transition ${isThemed ? "" : "bg-background hover:bg-muted/40"}`}
+                      style={
+                        isCitadel ? { backgroundColor: "#09090e", borderColor: "#c9a96e" }
+                        : isEvenstar ? { backgroundColor: "#0A0D16", borderColor: "#6C63FF40" }
+                        : undefined
+                      }
                     >
                       <div className="flex items-start justify-between gap-4">
                         {isCitadel ? (
                           <div className="rounded-2xl border p-3" style={{ backgroundColor: "#131320", borderColor: "#2a2a3a" }}>
                             <span style={{ color: "#c9a96e", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>⬡</span>
+                          </div>
+                        ) : isEvenstar ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#111520", borderColor: "#6C63FF30" }}>
+                            <span style={{ color: "#6C63FF", fontSize: "20px", lineHeight: 1, fontFamily: "monospace" }}>★</span>
                           </div>
                         ) : (
                           <div className="rounded-2xl border bg-muted/40 p-3">
@@ -137,29 +147,43 @@ export default function DeadlockLabsPage() {
                           </div>
                         )}
                         <span
-                          className={`rounded-full border px-3 py-1 text-xs ${!isCitadel ? statusClass(status) : ""}`}
-                          style={isCitadel
-                            ? { borderColor: "#c9a96e40", backgroundColor: "#c9a96e12", color: "#c9a96e" }
-                            : undefined}
+                          className={`rounded-full border px-3 py-1 text-xs ${!isThemed ? statusClass(status) : ""}`}
+                          style={
+                            isCitadel ? { borderColor: "#c9a96e40", backgroundColor: "#c9a96e12", color: "#c9a96e" }
+                            : isEvenstar ? { borderColor: "#6C63FF40", backgroundColor: "#6C63FF12", color: "#6C63FF" }
+                            : undefined
+                          }
                         >
                           {status}
                         </span>
                       </div>
                       <h4
                         className="mt-5 text-lg font-medium tracking-tight"
-                        style={isCitadel ? { color: "#f2ede5", fontFamily: "var(--font-playfair)", fontWeight: 600, letterSpacing: "0.04em" } : undefined}
+                        style={
+                          isCitadel ? { color: "#f2ede5", fontFamily: "var(--font-playfair)", fontWeight: 600, letterSpacing: "0.04em" }
+                          : isEvenstar ? { color: "#F0F2F6", fontWeight: 600, letterSpacing: "0.01em" }
+                          : undefined
+                        }
                       >
                         {String(exploration.title)}
                       </h4>
                       <p
                         className="mt-3 text-sm leading-7 text-muted-foreground"
-                        style={isCitadel ? { color: "rgba(242, 237, 229, 0.55)" } : undefined}
+                        style={
+                          isCitadel ? { color: "rgba(242, 237, 229, 0.55)" }
+                          : isEvenstar ? { color: "rgba(240, 242, 246, 0.55)" }
+                          : undefined
+                        }
                       >
                         {String(exploration.summary)}
                       </p>
                       <div
-                        className={`mt-5 inline-flex items-center gap-2 text-sm transition ${!isCitadel ? "text-muted-foreground group-hover:text-foreground" : ""}`}
-                        style={isCitadel ? { color: "rgba(242, 237, 229, 0.4)" } : undefined}
+                        className={`mt-5 inline-flex items-center gap-2 text-sm transition ${!isThemed ? "text-muted-foreground group-hover:text-foreground" : ""}`}
+                        style={
+                          isCitadel ? { color: "rgba(242, 237, 229, 0.4)" }
+                          : isEvenstar ? { color: "rgba(240, 242, 246, 0.4)" }
+                          : undefined
+                        }
                       >
                         Read idea <ArrowUpRight className="h-4 w-4" />
                       </div>

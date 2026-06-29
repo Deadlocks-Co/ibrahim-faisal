@@ -19,7 +19,7 @@ const stages = [
   {
     name: "Testing",
     description: "The prototype is ready for feedback from friends, colleagues, builders, or target users.",
-    items: ["The Citadel"]
+    items: ["The Citadel", "Evenstar AI"]
   },
   {
     name: "Building",

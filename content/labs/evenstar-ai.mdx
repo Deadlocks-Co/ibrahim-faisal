@@ -1,0 +1,24 @@
+---
+title: Evenstar AI
+slug: evenstar-ai
+summary: An AI readiness discovery platform for consulting engagements — structured multi-stakeholder questionnaire, Supabase-backed multi-client management, and one-click AI-synthesised executive briefing.
+framing: What if every consulting engagement started with a structured AI readiness discovery — respondents answer, data accumulates, and Claude synthesises the findings into a co-branded executive report in one click?
+category: AI Systems
+status: Testing
+icon: Network
+cardTheme: evenstar
+published: "2026-06-29"
+updated: "2026-06-29"
+url: "https://evenstar-ai.vercel.app"
+draft: false
+tags:
+  - ai-readiness
+  - consulting-tooling
+  - multi-tenant
+problem: AI consulting engagements lack a structured, repeatable discovery phase. Consultants manually collect readiness data, synthesise it unevenly, and present it without a consistent framework — leading to variable engagement quality and slow time-to-insight.
+exploration: A multi-tenant Next.js 14 platform where the consulting team pre-loads a client engagement (six assessment dimensions, ~45 questions), invites respondents via magic-link email, and accumulates structured answers in Supabase. Respondents complete at their own pace with auto-saved progress. Once submissions are in, one click invokes Claude to synthesise all responses into a co-branded executive briefing — consensus findings, divergent views, top AI opportunities, readiness gaps, and a recommended engagement path. The auth and report flows support dual-branding — consulting firm logo alongside the client's identity.
+audience: AI consultants running readiness engagements with enterprise clients. Respondents are client-side stakeholders invited per engagement.
+model: Consulting infrastructure for AI readiness engagements. Reduces setup time, improves consistency, and gives consulting firms a differentiated AI-native discovery capability.
+risks: Report quality depends on response completeness and diversity. Low response rates produce thin synthesis. The magic-link flow assumes pre-authorised email lists, which requires admin discipline per engagement. AI report is non-deterministic — regeneration produces a different output.
+notes: Co-branding — showing both the consulting firm's logo and the client's identity — is a small implementation detail with outsized perception impact. The six-dimension structure maps well to real discovery conversations. Active question is whether one-click synthesis is production-ready, or needs a consultant edit pass before delivery.
+---
