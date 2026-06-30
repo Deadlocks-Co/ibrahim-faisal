@@ -9,7 +9,7 @@ const stages = [
   {
     name: "Researching",
     description: "The idea is being tested through notes, specs, market reading, and conversations.",
-    items: ["World Cup Quiz Battle"]
+    items: ["World Cup Quiz Battle", "Dig Truth 1971"]
   },
   {
     name: "Prototype",

@@ -22,7 +22,7 @@ const categoryMeta: Record<string, { description: string }> = {
 
 const metrics = [
   { label: "Exploration lanes", value: "3" },
-  { label: "Active ideas", value: "7" },
+  { label: "Active ideas", value: "8" },
   { label: "Core themes", value: "AI + Data" },
   { label: "Build mode", value: "Prototype first" }
 ];
@@ -121,7 +121,8 @@ export default function DeadlockLabsPage() {
                   const isEvenstar = String(exploration.cardTheme ?? "") === "evenstar";
                   const isBangla = String(exploration.cardTheme ?? "") === "bangla";
                   const isGallerySide = String(exploration.cardTheme ?? "") === "galleryside";
-                  const isThemed = isCitadel || isEvenstar || isBangla || isGallerySide;
+                  const isDigTruth = String(exploration.cardTheme ?? "") === "digtruth";
+                  const isThemed = isCitadel || isEvenstar || isBangla || isGallerySide || isDigTruth;
 
                   return (
                     <Link
@@ -133,6 +134,7 @@ export default function DeadlockLabsPage() {
                         : isEvenstar ? { backgroundColor: "#090D1F", borderColor: "#4B7CF6" }
                         : isBangla ? { backgroundColor: "#120D0A", borderColor: "#C0392B" }
                         : isGallerySide ? { backgroundColor: "#030303", borderColor: "#00DDB0" }
+                        : isDigTruth ? { backgroundColor: "#0B0907", borderColor: "#8c1e1e" }
                         : undefined
                       }
                     >
@@ -153,6 +155,10 @@ export default function DeadlockLabsPage() {
                           <div className="rounded-2xl border p-3" style={{ backgroundColor: "#0A0A0A", borderColor: "#00DDB030" }}>
                             <span style={{ color: "#00DDB0", fontSize: "14px", lineHeight: 1, fontFamily: "monospace", fontWeight: 700, letterSpacing: "0.05em" }}>GS</span>
                           </div>
+                        ) : isDigTruth ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#150E0C", borderColor: "#8c1e1e30" }}>
+                            <span style={{ color: "#8c1e1e", fontSize: "13px", lineHeight: 1, fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: "0.04em" }}>71</span>
+                          </div>
                         ) : (
                           <div className="rounded-2xl border bg-muted/40 p-3">
                             <Icon className="h-5 w-5" />
@@ -165,6 +171,7 @@ export default function DeadlockLabsPage() {
                             : isEvenstar ? { borderColor: "#4B7CF640", backgroundColor: "#4B7CF612", color: "#4B7CF6" }
                             : isBangla ? { borderColor: "#C0392B40", backgroundColor: "#C0392B12", color: "#C0392B" }
                             : isGallerySide ? { borderColor: "#00DDB040", backgroundColor: "#00DDB012", color: "#00DDB0" }
+                            : isDigTruth ? { borderColor: "#8c1e1e40", backgroundColor: "#8c1e1e12", color: "#8c1e1e" }
                             : undefined
                           }
                         >
@@ -178,6 +185,7 @@ export default function DeadlockLabsPage() {
                           : isEvenstar ? { color: "#E8EEF8", fontWeight: 600, letterSpacing: "0.01em" }
                           : isBangla ? { color: "#F5EDE8", fontWeight: 600, letterSpacing: "0.01em" }
                           : isGallerySide ? { color: "#E8FFF8", fontWeight: 700, letterSpacing: "0.02em" }
+                          : isDigTruth ? { color: "#f6f0e5", fontFamily: "Georgia, serif", fontWeight: 600, letterSpacing: "0.01em" }
                           : undefined
                         }
                       >
@@ -190,6 +198,7 @@ export default function DeadlockLabsPage() {
                           : isEvenstar ? { color: "rgba(232, 238, 248, 0.55)" }
                           : isBangla ? { color: "rgba(245, 237, 232, 0.55)" }
                           : isGallerySide ? { color: "rgba(232, 255, 248, 0.55)" }
+                          : isDigTruth ? { color: "rgba(246, 240, 229, 0.5)" }
                           : undefined
                         }
                       >
@@ -202,6 +211,7 @@ export default function DeadlockLabsPage() {
                           : isEvenstar ? { color: "rgba(75, 124, 246, 0.5)" }
                           : isBangla ? { color: "rgba(192, 57, 43, 0.6)" }
                           : isGallerySide ? { color: "rgba(0, 221, 176, 0.6)" }
+                          : isDigTruth ? { color: "rgba(140, 30, 30, 0.6)" }
                           : undefined
                         }
                       >

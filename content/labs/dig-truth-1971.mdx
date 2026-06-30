@@ -1,0 +1,25 @@
+---
+title: Dig Truth 1971
+slug: dig-truth-1971
+summary: A Bangladesh genocide documentation platform — declassified diplomatic cables, victim records, a dual honour-and-shame accountability register, and a live litigation tracker — built on Next.js and Supabase.
+framing: What if the full evidence record of the 1971 Bangladesh genocide — the cables, the victims, the perpetrators, the active legal proceedings — existed in a single searchable, publicly accessible archive that could support both historical memory and accountability litigation?
+category: Interactive Experiences
+status: Researching
+icon: Network
+cardTheme: digtruth
+published: "2026-06-30"
+updated: "2026-06-30"
+url: "https://digtruth1971.org"
+draft: false
+tags:
+  - genocide-documentation
+  - public-archive
+  - accountability
+  - legal-pursuit
+problem: The 1971 Bangladesh genocide killed three million people and subjected two hundred thousand women to organised sexual violence. The evidence exists — in declassified State Department cables, in Archer Blood's formal dissent telegram, in the Simla Agreement that traded justice for repatriation. But no international tribunal has tried a single Pakistani military or political leader. The documentation is scattered, the perpetrators are named but not charged, and the legal pursuit has no central public record connecting historical evidence to active proceedings.
+exploration: A Next.js 14 App Router platform with six public-facing modules — a historical timeline contextualising the nine months of the genocide (/learn), a declassified cables archive browseable by classification and sender (/cables), a victim and survivor register (/remember), a dual honour-and-shame accountability register explicitly naming those who spoke and those who were complicit (/chamber), and a live litigation tracker for proceedings across international and domestic jurisdictions (/litigation). All data lives in Supabase Postgres with row-level security. An Airtable integration syncs legal notices for the restricted legal team back-end. A PDF generation module allows authenticated legal users to produce letterheaded legal notices for filing.
+audience: Researchers, historians, genocide scholars, legal teams pursuing accountability, diaspora Bangladeshi communities, and journalists covering war crimes documentation. The public archive is unauthenticated; the legal notices and admin modules are role-restricted.
+model: A documentation platform that treats historical memory and active legal pursuit as separate but connected concerns — the public archive is fully open, while sensitive legal proceedings are managed behind an authentication layer. The accountability register's honour/shame dichotomy is a deliberate editorial choice, not a neutral taxonomy.
+risks: Content accuracy in a genocide archive carries serious reputational and legal weight — errors or unsourced claims could undermine credibility and expose the initiative to legal challenge. The litigation register requires sustained maintenance by a legal team. Institutional recognition from historians, legal organisations, or diaspora groups is necessary for the platform to reach the people who need it. Airtable introduces a third-party dependency in the legal notices pipeline.
+notes: The two-tone wordmark — DIG in crimson, TRUTH in brand green — is the product's clearest identity signal and reflects the dual mission of digging up suppressed evidence and asserting the truth of what happened. The cable classification system (TOP SECRET / SECRET / CONFIDENTIAL / UNCLASSIFIED) gives the archive an immediately legible visual grammar borrowed from the primary sources themselves. The honour/shame register structure will be politically sensitive; the framing must be defensible and sourced.
+---
