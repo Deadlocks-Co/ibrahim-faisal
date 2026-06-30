@@ -24,7 +24,7 @@ const stages = [
   {
     name: "Building",
     description: "The idea has enough signal to deserve sustained product work.",
-    items: []
+    items: ["ICTBD Tracker"]
   }
 ];
 

@@ -22,7 +22,7 @@ const categoryMeta: Record<string, { description: string }> = {
 
 const metrics = [
   { label: "Exploration lanes", value: "3" },
-  { label: "Active ideas", value: "8" },
+  { label: "Active ideas", value: "9" },
   { label: "Core themes", value: "AI + Data" },
   { label: "Build mode", value: "Prototype first" }
 ];
@@ -122,7 +122,8 @@ export default function DeadlockLabsPage() {
                   const isBangla = String(exploration.cardTheme ?? "") === "bangla";
                   const isGallerySide = String(exploration.cardTheme ?? "") === "galleryside";
                   const isDigTruth = String(exploration.cardTheme ?? "") === "digtruth";
-                  const isThemed = isCitadel || isEvenstar || isBangla || isGallerySide || isDigTruth;
+                  const isIctbd = String(exploration.cardTheme ?? "") === "ictbd";
+                  const isThemed = isCitadel || isEvenstar || isBangla || isGallerySide || isDigTruth || isIctbd;
 
                   return (
                     <Link
@@ -135,6 +136,7 @@ export default function DeadlockLabsPage() {
                         : isBangla ? { backgroundColor: "#120D0A", borderColor: "#C0392B" }
                         : isGallerySide ? { backgroundColor: "#030303", borderColor: "#00DDB0" }
                         : isDigTruth ? { backgroundColor: "#0B0907", borderColor: "#8c1e1e" }
+                        : isIctbd ? { backgroundColor: "#0a0304", borderColor: "#CE1126" }
                         : undefined
                       }
                     >
@@ -159,6 +161,10 @@ export default function DeadlockLabsPage() {
                           <div className="rounded-2xl border p-3" style={{ backgroundColor: "#150E0C", borderColor: "#8c1e1e30" }}>
                             <span style={{ color: "#8c1e1e", fontSize: "13px", lineHeight: 1, fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: "0.04em" }}>71</span>
                           </div>
+                        ) : isIctbd ? (
+                          <div className="rounded-2xl border p-3" style={{ backgroundColor: "#1a0306", borderColor: "#CE112630" }}>
+                            <span style={{ color: "#CE1126", fontSize: "16px", lineHeight: 1, fontFamily: "monospace", fontWeight: 700 }}>⚖</span>
+                          </div>
                         ) : (
                           <div className="rounded-2xl border bg-muted/40 p-3">
                             <Icon className="h-5 w-5" />
@@ -172,6 +178,7 @@ export default function DeadlockLabsPage() {
                             : isBangla ? { borderColor: "#C0392B40", backgroundColor: "#C0392B12", color: "#C0392B" }
                             : isGallerySide ? { borderColor: "#00DDB040", backgroundColor: "#00DDB012", color: "#00DDB0" }
                             : isDigTruth ? { borderColor: "#8c1e1e40", backgroundColor: "#8c1e1e12", color: "#8c1e1e" }
+                            : isIctbd ? { borderColor: "#CE112640", backgroundColor: "#CE112612", color: "#CE1126" }
                             : undefined
                           }
                         >
@@ -186,6 +193,7 @@ export default function DeadlockLabsPage() {
                           : isBangla ? { color: "#F5EDE8", fontWeight: 600, letterSpacing: "0.01em" }
                           : isGallerySide ? { color: "#E8FFF8", fontWeight: 700, letterSpacing: "0.02em" }
                           : isDigTruth ? { color: "#f6f0e5", fontFamily: "Georgia, serif", fontWeight: 600, letterSpacing: "0.01em" }
+                          : isIctbd ? { color: "#f5e8ea", fontWeight: 600, letterSpacing: "0.01em" }
                           : undefined
                         }
                       >
@@ -199,6 +207,7 @@ export default function DeadlockLabsPage() {
                           : isBangla ? { color: "rgba(245, 237, 232, 0.55)" }
                           : isGallerySide ? { color: "rgba(232, 255, 248, 0.55)" }
                           : isDigTruth ? { color: "rgba(246, 240, 229, 0.5)" }
+                          : isIctbd ? { color: "rgba(245, 232, 234, 0.5)" }
                           : undefined
                         }
                       >
@@ -212,6 +221,7 @@ export default function DeadlockLabsPage() {
                           : isBangla ? { color: "rgba(192, 57, 43, 0.6)" }
                           : isGallerySide ? { color: "rgba(0, 221, 176, 0.6)" }
                           : isDigTruth ? { color: "rgba(140, 30, 30, 0.6)" }
+                          : isIctbd ? { color: "rgba(206, 17, 38, 0.6)" }
                           : undefined
                         }
                       >
