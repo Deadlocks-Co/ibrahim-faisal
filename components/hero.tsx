@@ -21,14 +21,15 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
     category: String(l.category),
   }));
 
-  const recentPosts = [...feedPosts].reverse().slice(0, 4);
+  const recentPosts = [...feedPosts].reverse().slice(0, 3);
 
   return (
     <section className="pt-28 pb-20 sm:pt-36">
       <div className="mx-auto max-w-6xl px-6">
+        {/* Top row: intro vs shredder — shredder height is anchored to this content */}
         <div className="grid gap-12 lg:grid-cols-[1fr_300px] lg:items-stretch">
-          {/* Left: main hero content */}
-          <div>
+          {/* Left: name, description, tags, carousel, CTAs */}
+          <div className="flex flex-col">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">
               Founder of Deadlock Labs
             </p>
@@ -72,6 +73,7 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
               {recentPosts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nothing here yet.</p>
               ) : (
+                <div className="flex-1 min-h-0 overflow-hidden">
                 <div className="space-y-px">
                   {recentPosts.map((post) => {
                     const Icon = typeIcon[post.type];
@@ -95,8 +97,8 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
                               src={post.image}
                               alt={post.content || "Shredder image"}
                               width={300}
-                              height={180}
-                              className="w-full object-cover"
+                              height={80}
+                              className="w-full object-cover max-h-[80px]"
                             />
                           </a>
                         )}
@@ -126,11 +128,12 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
                     );
                   })}
                 </div>
+                </div>
               )}
 
               <Link
                 href="/outside/feed"
-                className="mt-auto pt-4 flex items-center gap-1 text-xs text-muted-foreground transition hover:text-foreground"
+                className="pt-4 flex items-center gap-1 text-xs text-muted-foreground transition hover:text-foreground"
               >
                 Show full timeline
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -138,6 +141,7 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
