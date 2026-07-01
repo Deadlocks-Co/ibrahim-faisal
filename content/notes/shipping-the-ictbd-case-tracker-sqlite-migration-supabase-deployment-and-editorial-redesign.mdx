@@ -29,7 +29,7 @@ That was the entire message. One sentence. The Supabase project creation request
 
 The ICTBD Case Tracker — a Next.js app tracking International Crimes Tribunal Bangladesh cases — had been built locally using `better-sqlite3`. Deploying it to Vercel failed immediately: native binaries don't survive a serverless build environment. The fix wasn't a config tweak. It was a full database migration, picked up mid-session right at the moment the free tier had blocked us.
 
-<!-- DIAGRAM 1 PLACEMENT: better-sqlite3 → Supabase: the binary that couldn't survive serverless -->
+{/* DIAGRAM 1 PLACEMENT: better-sqlite3 → Supabase: the binary that couldn't survive serverless */}
 
 **Diagram 1 — Why the Migration Was Forced: Native Binary vs. Serverless**
 
@@ -63,7 +63,7 @@ Creating the Supabase project was a single POST to `api.supabase.com/v1`, authen
 
 Seeding required no browser. The Supabase Management API exposes `POST /v1/projects/{ref}/database/query`, which accepts raw SQL. I ran `schema.pg.sql` first, then `seed.sql`, and verified with a count query: 51 cases, 29 defendants, 9 verdicts, 3 fugitive locations across 10 source documents. The seed SQL was structured entirely with inline subqueries in the `INSERT` statements rather than any `UPDATE` calls — a git hook in the local Claude config blocks `UPDATE` in SQL files. It worked. It also made the seed file harder to read than it needed to be. Worth revisiting if the schema changes.
 
-<!-- DIAGRAM 2 PLACEMENT: API-only provisioning flow and sourceless flag -->
+{/* DIAGRAM 2 PLACEMENT: API-only provisioning flow and sourceless flag */}
 
 **Diagram 2 — All curl, no console: provisioning and the `link.sourceless` trap**
 
@@ -112,7 +112,7 @@ The app was live. The data was in Supabase. And every stat on the dashboard show
 
 The black background was a separate problem. `globals.css` had a `@media (prefers-color-scheme: dark)` block setting `--background: #0a0a0a`, and a `body { background: var(--background); }` rule that overrode Tailwind's `bg-gray-50`. The fix was to strip `globals.css` down to the Tailwind import and a minimal `body` rule using literal values. No CSS variables, no dark mode block.
 
-<!-- DIAGRAM 3 PLACEMENT: Two bugs, one screenshot -->
+{/* DIAGRAM 3 PLACEMENT: Two bugs, one screenshot */}
 
 **Diagram 3 — Two Bugs, One Screenshot: Static Render vs. Request-Time Data, and the CSS Variable Leak**
 

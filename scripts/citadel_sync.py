@@ -66,6 +66,11 @@ def parse_frontmatter(text: str) -> tuple[dict, str]:
     return meta, body
 
 
+def sanitize_for_mdx(body: str) -> str:
+    """Convert HTML comments to MDX comments so the file parses as valid MDX."""
+    return re.sub(r"<!--(.*?)-->", lambda m: "{/*" + m.group(1) + "*/}", body, flags=re.DOTALL)
+
+
 def extract_summary(body: str) -> str:
     """Pull first non-heading, non-empty paragraph as summary."""
     for line in body.splitlines():
@@ -132,7 +137,7 @@ def sync_technical_pub(pub_dir: Path, slug: str) -> bool:
 
     dest.parent.mkdir(parents=True, exist_ok=True)
     frontmatter = build_site_frontmatter(slug, title, date, tags, summary)
-    dest.write_text(frontmatter + body)
+    dest.write_text(frontmatter + sanitize_for_mdx(body))
     log.info(f"  → content/notes/{slug}.mdx")
     return True
 
@@ -176,7 +181,7 @@ def sync_personal(pub_dir: Path, key: str) -> bool:
     dest = NOTES_DIR / f"{slug}.mdx"
     dest.parent.mkdir(parents=True, exist_ok=True)
     frontmatter = build_site_frontmatter(slug, title, date, tags, summary)
-    dest.write_text(frontmatter + body)
+    dest.write_text(frontmatter + sanitize_for_mdx(body))
     log.info(f"  → content/notes/{slug}.mdx")
     return True
 
