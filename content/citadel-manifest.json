@@ -10,6 +10,7 @@
     "technical/pub_20260630_103629_wiring-airtable-into-claude-code-via-mcp",
     "technical/pub_20260630_171958_four-sessions-to-fix-the-vercel-mcp",
     "technical/pub_20260630_172105_scraping-a-paginated-government-pdf-archive-with-python",
-    "technical/pub_20260630_201844_shipping-the-ictbd-case-tracker-sqlite-migration-supabase-deployment-and-editorial-redesign"
+    "technical/pub_20260630_201844_shipping-the-ictbd-case-tracker-sqlite-migration-supabase-deployment-and-editorial-redesign",
+    "technical/pub_20260701_152521_shredder-hero-height-fix"
   ]
 }
