@@ -1,0 +1,167 @@
+---
+title: 'Building the AI Readiness Discovery Platform: Architecture and User Flow'
+slug: ai-readiness-discovery-platform-architecture-and-user-flow
+summary: The moment I knew the prototype had broken was a second employee trying to
+  submit. The first respondent had sailed through — Claude artifact, browser-side
+  Anthropic call to a Gmail MCP server, OTP fir
+published: '2026-06-29'
+updated: '2026-06-29'
+tags:
+- nextjs
+- supabase
+- multi-tenancy
+- auth
+- anthropic-sdk
+- gmail-mcp
+draft: false
+shareText: ''
+---
+
+The moment I knew the prototype had broken was a second employee trying to submit. The first respondent had sailed through — Claude artifact, browser-side Anthropic call to a Gmail MCP server, OTP fired from `window.storage`. It worked once. Then a second person at the same client company needed to submit independently, and there was no persistent record, no shared view, no way to give the consulting team a combined picture. The artifact approach had hit its ceiling.
+
+## From `window.storage` to Supabase
+
+I replaced the whole stack with a Next.js 14 App Router application backed by Supabase. Multi-tenancy is a `clients` table with a `slug` column. Each client gets a URL segment — `/acme`, `/demo` — and an accent colour pulled from the database at render time. Templates, themes, and questions live in three relational tables. Onboarding a new client means inserting rows, not deploying code.
+
+Authentication is Supabase's native email OTP. The user lands on the branded landing page, clicks Begin Discovery, enters their email. Before Supabase fires the OTP, the app calls `/api/auth/check` to verify the email against `client_users`. If the email isn't there, the OTP is never triggered. Consulting team members bypass that check entirely — their role is determined by email domain suffix, no DB lookup required. That single suffix rule keeps the role-routing logic short enough to hold in your head.
+
+**Diagram 1 — Email OTP Auth Flow with Pre-validation Gate**
+
+```
+Browser          /api/auth/check     Supabase Auth     Server Component
+   |                    |                  |                   |
+   |-- POST email ----->|                  |                   |
+   |                    |-- check          |                   |
+   |                    |  client_users    |                   |
+   |                    |                  |                   |
+   |<-- 403 reject -----| (not in table)   |                   |
+   |                    |                  |                   |
+   |<-- 200 ok ---------| (email valid)    |                   |
+   |                    |                  |                   |
+   |-- sendOtp() --------------------------------->|           |
+   |                    |                  |<-- email sent     |
+   |                    |                  |                   |
+   |  [user enters 6-digit code]           |                   |
+   |                    |                  |                   |
+   |-- verifyOtp() --------------------------->|               |
+   |<-- session token -----------------------------|           |
+   |                    |                  |                   |
+   |-- GET next route ---------------------------------------->|
+   |                    |                  |         read session cookie
+   |                    |                  |                   |
+   |<-- redirect: /dashboard (consulting domain) --------------|
+   |<-- redirect: /[client]/questionnaire (client user) -------|
+   |<-- redirect: /[client]/complete (already submitted) ------|
+
+--- IMPLICIT FLOW SIDE BRANCH (AuthHashHandler, fires on mount) ---
+
+Browser
+   |
+   | window.location.hash contains #access_token=...
+   |-- supabase.auth.setSession(hash tokens)
+   |-- clear hash
+   |-- redirect based on email domain  -->  (rejoins main routing above)
+```
+
+## The PKCE Route That Never Fired
+
+I wrote an `/auth/callback` route to handle PKCE redirects. It was technically correct for that flow. Supabase, however, used implicit flow and dropped the tokens in the URL hash — `/login#access_token=...` — rather than passing a `code` query parameter. The route was never called. The tokens landed on the login page and were silently dropped.
+
+I'm not certain PKCE would have been the wrong call in a different configuration. The Supabase docs cover both flows, and I had the redirect URL set to localhost before I caught that token verification has to happen at Supabase's endpoint, not the app's. What fixed it was an `AuthHashHandler` client component in the root layout: on mount, it reads `window.location.hash`, calls `supabase.auth.setSession()` if tokens are present, clears the hash, and redirects based on email domain. I added it only after watching the actual redirect behaviour in Playwright. It wasn't in the original design. It is now load-bearing.
+
+## Questionnaire State and the Service-Role Key
+
+I built the OTP verify page with six individual digit inputs and paste support. On submit it calls `supabase.auth.verifyOtp()` client-side. Once the session is established, the server component at the next route reads the session cookie and routes: consulting team to the engagement dashboard, client employees to their questionnaire. If a client user has already submitted, they hit the completion page.
+
+I save progress to Supabase on every theme advance — a POST that creates or updates the in-progress submission. Final submit is a PATCH that sets `submitted_at`. Null `submitted_at` means in-progress. I gate completion at 70% of questions answered.
+
+**Diagram 2 — Multi-tenant Data Model and Row-Level Security Boundary**
+
+```
+                         SCHEMA
+
+  clients ─────────────────────────────────────────────────────────┐
+  (slug, accent_colour)                                            │
+       │                                                           │
+       ├──── client_users (email, client_id)                       │
+       │                                                           │
+       ├──── submissions (client_id, user_id, submitted_at)        │
+       │         submitted_at IS NULL  → in-progress               │
+       │         submitted_at NOT NULL → complete                  │
+       │         [70% gate on PATCH]                               │
+       │                                                           │
+       └──── client_reports (client_id, report (cached), created_at)│
+                                                                   │
+  templates ──── themes ──── questions                             │
+  (content schema, separate from client rows)                      │
+                                                                   │
+┌─────────────────────────────────────────────────────────────────┘
+│
+│  ACCESS BOUNDARY
+│
+│  ┌──────────────────────────────────────────┐
+│  │  anon / authenticated role (RLS ON)      │
+│  │  client users read/write own rows only   │
+│  │  app/[client]/questionnaire/page.js      │
+│  └──────────────────────────────────────────┘
+│
+│  ┌──────────────────────────────────────────┐
+│  │  service-role key (RLS BYPASSED)         │
+│  │  consulting dashboard reads all          │
+│  │  submissions for a given client          │
+│  │  app/dashboard/[client]/page.js          │
+│  │  app/api/generate-client-report/         │
+│  └──────────────────────────────────────────┘
+```
+
+The consulting dashboard reads all completed submissions for a given client using the service-role key, which bypasses row-level security. Individual client users can only read and write their own rows. The aggregate AI readiness report is generated server-side via the Anthropic SDK — the API key never touches the browser. Once generated, it's cached in a `client_reports` table so repeated views don't re-invoke the API. Email delivery goes through a Gmail MCP server via a second Anthropic call; if that fails, the UI surfaces a fallback prompt so the consultant can copy-paste the report manually.
+
+## Supabase's Built-In Mailer and the Dev Bypass
+
+The first OTP attempt produced nothing. No error. No email. The Supabase built-in SMTP on the free tier failed silently. I added a dev-only API route at `/api/dev-auth` that uses the admin SDK to generate a magic link without sending email — gated behind a `NODE_ENV === 'development'` check, returning a URL the engineer opens directly. For production, the fix is a custom SMTP provider in the Supabase dashboard; that configuration is still pending.
+
+The `@supabase/mcp-server-supabase` I added to `~/.claude/settings.json` mid-session hit a Cloudflare 403 on the Management API's SQL query endpoint. The Supabase CLI via Homebrew installed in about one second and ran the three SQL files — `schema.sql`, `seed-*.sql`, `migration-client-reports.sql` — cleanly via `supabase db query --linked --file`. Sometimes the simpler path is the one you try second.
+
+## Where It Stands
+
+The architecture holds for the multi-respondent case — I'm satisfied with that part. The open questions are operational: the custom SMTP provider isn't configured, so production OTP delivery still depends on the free-tier mailer that already failed once. The Gmail MCP email path has a manual fallback but no retry or queue. And the service-role key that reads all client submissions has no audit trail attached — any consulting team member who can reach the dashboard can query any client's data without a log entry.
+
+**Diagram 3 — Report Generation and Delivery Pipeline**
+
+```
+Consulting User (browser)
+        |
+        | GET /dashboard/[client]
+        |
+        v
+  Server Component
+        |
+        |-- query client_reports (service-role key)
+        |
+        |   cached?
+        |   YES ──────────────────────> render report
+        |   NO
+        |
+        v
+  /api/generate-client-report
+        |
+        |-- fetch all completed submissions (service-role)
+        |-- call Anthropic SDK  [API key: server-side only]
+        |-- write result to client_reports
+        |
+        v
+   report rendered
+        |
+        | consulting user clicks "Email Report"
+        |
+        v
+  /api/email-report
+        |
+        |-- Anthropic SDK call --> Gmail MCP server
+        |
+        |   MCP send OK?
+        |   YES ──────> "Email sent" confirmation
+        |   NO  ──────> UI shows copy-paste fallback prompt
+```
+
+Those aren't blockers for an internal engagement. They would be before this goes to a second client.

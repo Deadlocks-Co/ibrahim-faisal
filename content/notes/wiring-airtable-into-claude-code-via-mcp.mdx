@@ -1,0 +1,104 @@
+---
+title: Wiring Airtable into Claude Code via MCP
+slug: wiring-airtable-into-claude-code-via-mcp
+summary: npm error 404 Not Found - GET https://registry.npmjs.org/@airtable%2fmcp-server
+published: '2026-06-30'
+updated: '2026-06-30'
+tags:
+- airtable
+- mcp
+- claude-code
+- settings
+- integration
+- debugging
+draft: false
+shareText: ''
+---
+
+## The 404 That Started It
+
+`npm error 404 Not Found - GET https://registry.npmjs.org/@airtable%2fmcp-server`
+
+That was the first response after I opened `~/.claude/settings.json`, confirmed the PAT was already sitting in the `env` block under `AIRTABLE_API_KEY`, and added what I assumed was the correct package. The name `@airtable/mcp-server` follows exactly how other vendors name their MCP packages. It does not exist.
+
+The brief was five words: "setup airtable mcp, pat is in .claude settings." No package name given. I guessed.
+
+## Finding the Right Package
+
+`npm search airtable mcp` returned three candidates. `@airtable/mcp-cli` at version 0.2.5, published by Airtable's own org. `@felores/airtable-mcp-server`, a community build, visibly older. A third with "enterprise analytics" in the description that I dismissed inside three seconds.
+
+The official CLI was obvious. I updated `mcpServers.airtable` in `settings.json`, swapped the package name, and moved to testing.
+
+## The Env Var That Didn't Match
+
+My first test passed `AIRTABLE_API_KEY` — the key already in the top-level `env` block — and got back `Not configured. Run airtable-mcp configure to get started.` Not a connection error. Not an auth failure. A configuration prompt, which meant the CLI had launched but couldn't find what it needed.
+
+I could have gone several directions here. Re-read the CLI docs. Checked whether the token needed a different format. Wondered whether the `env` injection in `settings.json` wasn't working at all. What I actually did was read the error carefully — it named the expected variable explicitly: `AIRTABLE_TOKEN`. One rename in the `mcpServers.airtable` env block. One retest. Two bases returned in JSON within seconds.
+
+This is the moment that could have cost half an hour if I'd assumed the error was about scope or token validity rather than variable name. The CLI doesn't read `AIRTABLE_API_KEY`. It reads `AIRTABLE_TOKEN`. Those are different keys for the same credential.
+
+**Diagram 1 — Two Wrong Guesses, One Right Answer**
+
+```
+  ATTEMPT 1: Package Name
+  ┌─────────────────────────────────────┐
+  │  @airtable/mcp-server               │  <-- assumed
+  │  npm install...                     │
+  │  404 Not Found                      │  <-- clean failure
+  └──────────────┬──────────────────────┘
+                 │  npm search airtable mcp
+                 ▼
+  ┌─────────────────────────────────────────┐
+  │  @airtable/mcp-cli  v0.2.5  [official]  │  <-- correct
+  │  @felores/airtable-mcp-server           │  <-- community, older
+  │  [enterprise analytics — dismissed]     │
+  └──────────────┬──────────────────────────┘
+                 │  install correct package
+                 ▼
+  ATTEMPT 2: Env Var
+  ┌─────────────────────────────────────┐
+  │  AIRTABLE_API_KEY  (from env block) │  <-- assumed
+  │  "Not configured. Run airtable-mcp  │
+  │   configure to get started."        │  <-- config error
+  └──────────────┬──────────────────────┘
+                 │  error message named the right var
+                 ▼
+  ┌─────────────────────────────────────┐
+  │  AIRTABLE_TOKEN                     │  <-- correct
+  │  two bases returned in JSON         │  <-- works
+  └─────────────────────────────────────┘
+```
+
+## What the Token Scope Revealed
+
+The two bases that came back were `Persons of Interest` (`apputMgfhzDY8MBBa`) and `Bangladesh Liberation War NAA` (`appSfzfTjdmJxNQFl`). Personal research projects. Not workspace tooling, not shared bases, not anything I expected to see first.
+
+The PAT's scope is what it is. It was issued against a personal account, not a workspace, and those are the bases that account can read. If I need agent access to shared workspace bases — collaboration tools, project trackers, anything team-facing — I'll need a separate token issued with different scope, and a second `mcpServers` entry or a token swap in the config.
+
+## Current State
+
+`mcpServers.airtable` now runs `@airtable/mcp-cli` with `AIRTABLE_TOKEN` injected directly in that block. The `AIRTABLE_API_KEY` in the top-level `env` block stays — it's a valid reference for scripts that call the Airtable REST API directly, and renaming it there would break those. The two names coexist for different consumers.
+
+**Diagram 2 — Final `mcpServers.airtable` Config Structure**
+
+```
+~/.claude/settings.json
+│
+├── env                          ← top-level env block
+│   ├── AIRTABLE_API_KEY: "pat…" ← REST API calls, scripts
+│   └── ... (other keys)
+│
+└── mcpServers
+    └── airtable                 ← MCP server entry
+        ├── command: "npx"
+        ├── args: ["-y", "@airtable/mcp-cli"]
+        └── env
+            └── AIRTABLE_TOKEN: "pat…"  ← what the CLI reads
+                                          (same PAT, different key name)
+
+                    AIRTABLE_API_KEY  ≠  AIRTABLE_TOKEN
+                    (env block name)     (CLI expected name)
+                    both point to the same PAT value
+```
+
+The open question is token scope. Personal bases work. The moment this needs to reach shared workspace data, the current token will return nothing or the wrong things, and the failure won't be loud — it'll look like an empty result set.
