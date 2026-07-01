@@ -1,5 +1,21 @@
 # Project Rules — Ibrahim Faisal Portfolio
 
+## Scratch Pad Notes — Thumbnails
+
+Every note in `content/notes/` must have a `thumbnail` field in its frontmatter pointing to `public/thumbnails/<slug>.png`.
+
+When creating or editing a note:
+
+1. **Identify the most prominent diagram.** Prefer a Mermaid diagram over ASCII art. If neither exists, use the most visually interesting code block.
+
+2. **Render and screenshot it.** Serve the note locally (`npm run dev`), navigate to the note, scroll to the diagram, and save a screenshot to `public/thumbnails/<slug>.png`. Use the Playwright screenshot tool; save to that exact path.
+
+3. **Add the frontmatter field.** Set `thumbnail: /thumbnails/<slug>.png` in the note's MDX frontmatter.
+
+A note without a `thumbnail` field is incomplete. Do not mark a note task as done until the thumbnail exists.
+
+---
+
 ## Deadlock Labs — Adding a New Entry
 
 When adding any new idea to `content/labs/`, follow these rules every time:
