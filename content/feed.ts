@@ -26,4 +26,32 @@ export const feedPosts: FeedPost[] = [
     url: "https://x.com/mehdirhasan/status/2070713185934418163",
     linkTitle: "Mehdi Hasan on X",
   },
+  {
+    id: "003",
+    type: "image",
+    date: "2026-07-01",
+    content: "",
+    image: "/shredder/fb-img-1782645209101.jpg",
+  },
+  {
+    id: "004",
+    type: "image",
+    date: "2026-07-01",
+    content: "",
+    image: "/shredder/fb-img-1782686581261.jpg",
+  },
+  {
+    id: "005",
+    type: "image",
+    date: "2026-07-01",
+    content: "",
+    image: "/shredder/d0beda6314388d37686ad3ec525562196b88ab7464f4cc2dda2fced0e0947fc71.jpg",
+  },
+  {
+    id: "006",
+    type: "image",
+    date: "2026-07-01",
+    content: "",
+    image: "/shredder/screenshot-20260629-091508.png",
+  },
 ];
