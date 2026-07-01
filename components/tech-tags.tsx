@@ -43,7 +43,6 @@ const rows: Tag[][] = [
 ];
 
 const CDN = "https://cdn.simpleicons.org";
-const MAX_COLS = 6; // widest row (rows 1 and 2)
 
 interface TechTagsProps {
   filterRows?: number[]; // 0-based row indices to include; omit for all rows
@@ -52,22 +51,18 @@ interface TechTagsProps {
 
 export function TechTags({ filterRows, large = false }: TechTagsProps) {
   const visibleRows = filterRows ? rows.filter((_, i) => filterRows.includes(i)) : rows;
-  const maxCols = Math.max(...visibleRows.map((r) => r.length));
   const iconClass = large ? "h-5 w-5" : "h-4 w-4";
   const textClass = large ? "text-sm" : "text-xs";
 
   return (
-    <div
-      className="mt-4 grid gap-x-6 gap-y-3"
-      style={{ gridTemplateColumns: `repeat(${maxCols}, max-content)` }}
-    >
-      {visibleRows.flatMap((row, ri) =>
-        row.map((tag, ci) => (
-          <span
-            key={tag.label}
-            className={`inline-flex items-center gap-2 ${textClass} text-muted-foreground`}
-            style={{ gridRow: ri + 1, gridColumn: ci + 1 }}
-          >
+    <div className="mt-4 flex flex-col gap-3">
+      {visibleRows.map((row, ri) => (
+        <div key={ri} className="flex flex-wrap gap-x-6 gap-y-2">
+          {row.map((tag) => (
+            <span
+              key={tag.label}
+              className={`inline-flex items-center gap-2 ${textClass} text-muted-foreground`}
+            >
             {tag.kind === "img" ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -91,9 +86,10 @@ export function TechTags({ filterRows, large = false }: TechTagsProps) {
               <tag.Icon className={iconClass} />
             )}
             {tag.label}
-          </span>
-        ))
-      )}
+            </span>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

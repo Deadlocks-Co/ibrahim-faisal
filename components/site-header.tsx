@@ -6,8 +6,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
-          IB
+        <Link href="/" className="text-base tracking-tight">
+          <span className="font-light">Deadlock</span><span className="font-bold"><span className="bg-gradient-to-r from-violet-500 to-blue-400 bg-clip-text text-transparent">Labs</span></span>
         </Link>
 
         <nav className="flex items-center gap-6">

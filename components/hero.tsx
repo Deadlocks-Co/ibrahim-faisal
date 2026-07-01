@@ -32,8 +32,8 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
             <p className="text-xs uppercase tracking-widest text-muted-foreground">
               Founder of Deadlock Labs
             </p>
-            <h1 className="mt-5 text-4xl font-light tracking-tight sm:text-5xl lg:text-6xl">
-              Ibrahim F<span className="text-violet-500">ai</span>sal
+            <h1 className="mt-5 text-4xl tracking-tight sm:text-5xl lg:text-6xl">
+              <span className="font-light">Ibrahim </span><span className="font-bold">F<span className="bg-gradient-to-r from-violet-500 to-blue-400 bg-clip-text text-transparent">AI</span>SAL</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               AI Systems Architect and Data Platform Builder exploring ideas across AI, data, language, community businesses, and interactive products.
