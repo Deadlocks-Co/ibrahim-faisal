@@ -24,7 +24,7 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
   const recentPosts = [...feedPosts].reverse().slice(0, 3);
 
   return (
-    <section className="pt-28 pb-20 sm:pt-36">
+    <section className="pt-16 pb-16 sm:pt-20">
       <div className="mx-auto max-w-6xl px-6">
         {/* Top row: intro vs shredder — shredder height is anchored to this content */}
         <div className="grid gap-12 lg:grid-cols-[1fr_300px] lg:items-stretch">
@@ -87,31 +87,25 @@ export function Hero({ labs }: { labs: ContentItem[] }) {
                           <p className="line-clamp-2 text-sm leading-6">{post.content}</p>
                         )}
                         {post.type === "image" && post.image && (
-                          <a
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-2 block overflow-hidden rounded-lg border transition hover:opacity-90"
-                          >
-                            <Image
-                              src={post.image}
-                              alt={post.content || "Shredder image"}
-                              width={300}
-                              height={80}
-                              className="w-full object-cover max-h-[80px]"
-                            />
-                          </a>
-                        )}
-                        {post.type === "image" && post.url && post.linkTitle && (
-                          <a
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                            {post.linkTitle}
-                          </a>
+                          post.linkTitle ? (
+                            <a
+                              href={post.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-2 flex items-start gap-3 overflow-hidden rounded-lg border p-2 transition hover:opacity-90"
+                            >
+                              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
+                                <Image src={post.image} alt={post.content || "Shredder image"} fill className="object-cover" />
+                              </div>
+                              <span className="mt-1 text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                                {post.linkTitle}
+                              </span>
+                            </a>
+                          ) : (
+                            <div className="mt-2 relative h-24 w-24 overflow-hidden rounded-lg border">
+                              <Image src={post.image} alt={post.content || "Shredder image"} fill className="object-cover" />
+                            </div>
+                          )
                         )}
                         {post.type === "link" && post.url && (
                           <a
