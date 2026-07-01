@@ -1,15 +1,18 @@
 'use client'
 
 import { useEffect, useId, useRef } from 'react'
+import { useTheme } from 'next-themes'
 
 export function MermaidDiagram({ chart }: { chart: string }) {
   const uid = useId().replace(/:/g, 'x')
   const ref = useRef<HTMLDivElement>(null)
+  const { resolvedTheme } = useTheme()
 
   useEffect(() => {
     let live = true
+    const theme = resolvedTheme === 'dark' ? 'dark' : 'base'
     import('mermaid').then(({ default: mermaid }) => {
-      mermaid.initialize({ startOnLoad: false, theme: 'base' })
+      mermaid.initialize({ startOnLoad: false, theme })
       mermaid
         .render(uid, chart)
         .then(({ svg }) => {
@@ -22,7 +25,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
     return () => {
       live = false
     }
-  }, [chart, uid])
+  }, [chart, uid, resolvedTheme])
 
   return <div ref={ref} className="my-8 flex justify-center overflow-x-auto" />
 }
