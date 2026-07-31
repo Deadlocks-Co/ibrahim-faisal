@@ -1,0 +1,202 @@
+---
+title: "Building a Snowflake App with an Embedded Cortex Agent"
+slug: building-a-snowflake-app-with-an-embedded-cortex-agent
+summary: A Next.js dashboard with an embedded Cortex Agent, deployed on Snowflake App Runtime. Every failure mode on this stack is silent — a payload shape error, an auth model that doesn't exist, and an SSE stream that parsed cleanly and rendered nothing.
+published: "2026-07-31"
+updated: "2026-07-31"
+tags:
+  - snowflake
+  - cortex-agent
+  - nextjs
+  - sse-streaming
+  - dashboard
+draft: false
+shareText: |
+  Built a Next.js app with an embedded Cortex Agent, deployed entirely on Snowflake App Runtime.
+
+  Everything on this stack fails quietly:
+  → The agent API rejects a plain-string prompt with "invalid payload" — it wants typed content blocks
+  → Forwarding the caller's token feels correct and is not supported — the SPCS service token is the only path
+  → Assume the OpenAI streaming shape and every SSE event parses fine while nothing renders
+
+  Full write-up, including the execution-role grant chain that hides behind "This page couldn't load", in the notes.
+---
+
+The first thing the Cortex Agent API ever said to me was `390142: Incoming request does not contain a valid payload`. The payload was right there — a question, a role, `stream: true`. Valid everything except the shape, which the error declined to mention. It set the tone for the whole UCCDE Intelligence Dashboard build: nothing on this stack fails loudly in a useful way.
+
+## What the app actually is
+
+The dashboard is a Next.js 16 app querying contact centre analytics across three platforms — AWS Connect, Genesys Cloud CX, and Avaya AXP Cloud. Each platform has its own gold-layer database — `UCCDE_VIV_CONNECT_GOLD`, `UCCDE_VIV_GENESYS_AU_GOLD`, `UCCDE_VIV_AVAYA_US_GOLD` — all sharing one star schema: `FACT_INTERACTION`, `DIM_DATE`. On top of the KPI cards sits a chat sidebar wired to `UCCDE_COMBINED_INTELLIGENCE_AGENT`, a Cortex Agent that answers natural-language questions across all three via text-to-SQL.
+
+The whole thing deploys to Snowflake App Runtime — SPCS under the hood, SSO in front, a live `.snowflakecomputing.app` URL at the end. No separate hosting, no auth layer to build. I scaffolded from the official Next.js template: `lib/snowflake.ts` with SDK and REST auth helpers, shadcn/ui, Tailwind, TanStack Query.
+
+**Runtime architecture: the browser reaches the Next.js app on Snowflake App Runtime (SPCS) over HTTPS with SSO, and the app fans out to the Cortex Agent REST API and the gold tables with three distinct auth flows.**
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart LR
+    B["Browser"]
+    subgraph SPCS["Snowflake App Runtime (SPCS)"]
+        APP["Next.js App<br/>/api/agent · /api/metrics"]
+    end
+    AGENT["Cortex Agent REST API<br/>/api/v2/.../agents/...:run"]
+    TABLES["Snowflake Gold Tables<br/>FACT_INTERACTION · DIM_DATE"]
+    B -->|"HTTPS — Snowflake SSO"| APP
+    APP -->|"SPCS service token<br/>owner's rights"| AGENT
+    APP -->|"service token or caller's token"| TABLES
+    style B fill:#ffffff,stroke:#94a3b8,stroke-width:1px
+    style SPCS fill:#f4f2ec,stroke:#cbd5e1,stroke-width:1px
+    style APP fill:#fdf0eb,stroke:#bc5a3a,stroke-width:2px
+    style AGENT fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style TABLES fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+```
+
+## The agent route, where the bodies are buried
+
+The bridge is a single API route, `app/api/agent/route.ts`. It POSTs to the Cortex Agent REST API — `/api/v2/databases/.../agents/UCCDE_COMBINED_INTELLIGENCE_AGENT:run` — and streams the SSE response back to the browser. Two things in that route cost me real debugging time; both produced errors that told me almost nothing.
+
+The first was the payload shape. The agent API rejects `content` as a plain string. It wants an array of typed blocks:
+
+```json
+{
+  "role": "user",
+  "content": [{ "type": "text", "text": "Your question here" }]
+}
+```
+
+Send `"content": "Your question here"` and you get `390142`. The fix is one level of nesting. Finding that out is not one level of effort.
+
+The second was authentication, and here's the wrong turn I'll own. My first instinct was to forward the caller's token — the `sf-context-current-user-token` header — so the agent would run as the signed-in user. It felt correct: per-user everything, least privilege. It is also not supported by the agent:run endpoint. You get back `390303: Invalid OAuth access token. null`, with the `null` doing a lot of heavy lifting. The working path is the SPCS service token — read from `/snowflake/session/token`, sent with `X-Snowflake-Authorization-Token-Type: OAUTH` — which authenticates as the app's execution role, owner's rights. Data routes can run per-user via `querySnowflake(sql, { callersRights: true })`; the agent API wants the service token, full stop.
+
+## The chat that said nothing
+
+Worse than any error was no error. The agent streams Server-Sent Events with separate `event:` and `data:` lines — `response.tool_result.status`, `response.thinking`, `response.text`, `response.table`, `response.tool_use`. My first parser assumed the OpenAI streaming shape, `delta.content[0].text`. Every event parsed fine. Nothing rendered. No exception, no console complaint — just a chat window that looked like the agent had nothing to say. I stared at a working stream and an empty UI for longer than I'd like to admit before questioning the assumption instead of the plumbing.
+
+**How the chat UI maps each of the five Cortex Agent SSE event types to a rendered content block.**
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart LR
+    SSE["SSE stream<br/>separate event: and data: lines"]
+    subgraph EVENTS["Agent events"]
+        E1["response.tool_result.status"]
+        E2["response.thinking"]
+        E3["response.text"]
+        E4["response.table"]
+        E5["response.tool_use"]
+    end
+    subgraph RENDER["Rendered in chat"]
+        R1["Spinner + status text"]
+        R2["Collapsible Thinking section"]
+        R3["Markdown answer"]
+        R4["Data table + auto chart"]
+        R5["Collapsible SQL code block"]
+    end
+    SSE --> E1
+    SSE --> E2
+    SSE --> E3
+    SSE --> E4
+    SSE --> E5
+    E1 --> R1
+    E2 --> R2
+    E3 --> R3
+    E4 --> R4
+    E5 -->|"only when input.sql present"| R5
+    style SSE fill:#fdf0eb,stroke:#bc5a3a,stroke-width:2px
+    style EVENTS fill:#f4f2ec,stroke:#cbd5e1,stroke-width:1px
+    style RENDER fill:#f4f2ec,stroke:#cbd5e1,stroke-width:1px
+    style E1 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style E2 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style E3 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style E4 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style E5 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style R1 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style R2 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style R3 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style R4 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style R5 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+```
+
+The fix was to track the `event:` line and accumulate text per event type. That pushed the message model from `{ role, content: string }` into content blocks — text, thinking, status, table, sql — and that's what makes the rendering CoWork-style: the answer as markdown, reasoning in a collapsible gray section, a status spinner, result sets as tables, generated SQL in a collapsible code block.
+
+One thing the agent will never do is hand you a chart. It returns `response.table` result sets and nothing more. So I wrote a client-side `ChatChart` component that inspects each table's columns and rows and auto-renders above it: a line chart when the first column is date-like with numeric columns and 3+ rows, a bar chart when it's categorical with 2–20 rows, nothing otherwise. Nobody types "show me a chart". The chart just appears when the data deserves one.
+
+## Deploy day, and the role you didn't choose
+
+Deploy itself is almost anticlimactic: `snow app setup` generates `snowflake.yml`, then `snow app deploy` uploads the source, runs `npm ci` and `next build` remotely on SPCS, and creates the Application Service. First deploy takes three to five minutes; after that, one or two.
+
+Then the page loads and says "This page couldn't load".
+
+The build guide flags this as the most common failure; it got me exactly as advertised. The app runs as its execution role — a role I never consciously chose — and that role starts with nothing. `SHOW APPLICATION SERVICES IN ACCOUNT` reveals it in the `execute_as_role` column. Then the grant chain: USAGE on the gold databases and schemas, SELECT on the tables; USAGE on the agent's database, schema, and the agent object itself (miss that and it's `399513: The agent does not exist or access is not authorized`); READ on the stage holding the semantic model YAML (miss that, `399504`); and USAGE on the agent's warehouse so it can run its generated SQL. The one mercy: each missing grant produces a different error, so you diagnose them one at a time.
+
+**The execution-role grant chain: each missing grant surfaces as a different, diagnosable error.**
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#f9f8f4',
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#1e293b',
+      'primaryBorderColor': '#e2e8f0',
+      'lineColor': '#94a3b8',
+      'secondaryColor': '#eae6ff',
+      'tertiaryColor': '#e2f4ed'
+    }
+  }
+}%%
+flowchart TD
+    ROLE["Execution role<br/>execute_as_role from SHOW APPLICATION SERVICES"]
+    G1["USAGE on gold databases + schemas<br/>SELECT on tables"]
+    G2["USAGE on agent database / schema / agent object"]
+    G3["READ on semantic-model stage"]
+    G4["USAGE on agent warehouse"]
+    E1["Prevents: This page couldn't load<br/>+ database not authorized in logs"]
+    E2["Prevents: 399513<br/>agent does not exist or not authorized"]
+    E3["Prevents: 399504<br/>stage does not exist or not authorized"]
+    E4["Prevents: agent can't execute<br/>the SQL it generates"]
+    ROLE --> G1 --> E1
+    ROLE --> G2 --> E2
+    ROLE --> G3 --> E3
+    ROLE --> G4 --> E4
+    style ROLE fill:#fdf0eb,stroke:#bc5a3a,stroke-width:2px
+    style G1 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style G2 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style G3 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style G4 fill:#eae6ff,stroke:#5c51a4,stroke-width:1px
+    style E1 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style E2 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style E3 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+    style E4 fill:#e2f4ed,stroke:#2f6d54,stroke-width:1px
+```
+
+## What's still annoying
+
+Locally, the agent route throws `390146: Bearer token is missing` because there's no `/snowflake/session/token` outside SPCS. Expected — it works after deploy — but it means the chat, the one component I most want to iterate on, is the one I can only test by deploying. Edit, `snow app deploy`, wait a minute, test the live URL. Judging by the error tables, the grant chain is the thing everyone hits. The app works locally, deploys cleanly, then can't see its own data. Every time.
