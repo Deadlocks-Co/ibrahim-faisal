@@ -96,4 +96,11 @@ export const feedPosts: FeedPost[] = [
     content: "",
     image: "/shredder/screenshot-20260813-171214.png",
   },
+  {
+    id: "013",
+    type: "image",
+    date: "2026-08-14",
+    content: "",
+    image: "/shredder/screenshot-20260814-140736.png",
+  },
 ];
